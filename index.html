@@ -1534,49 +1534,22 @@ async function passwordHash(password,saltHex){
 function safeEqual(a,b){if(typeof a!=='string'||typeof b!=='string'||a.length!==b.length)return false;let x=0;for(let i=0;i<a.length;i++)x|=a.charCodeAt(i)^b.charCodeAt(i);return x===0}
 function readJson(key){try{return JSON.parse(localStorage.getItem(key)||'null')}catch(e){return null}}
 function prepareProfile(email,{resetWallet=false}={}){
-  let loaded=readJson(PROFILE_PREFIX+email);
-  if(loaded&&typeof loaded==='object'){
-    sv=Object.assign(freshProfile(email),loaded,{email});
-  }else{
-    sv=freshProfile(email);
-    let previous=readJson('tanques_profile_v2:'+email);
-    if(previous&&typeof previous==='object'){
-      sv.name=String(previous.name||'Jugador').slice(0,18);
-      if(Array.isArray(previous.own))sv.own=[...new Set([0,...previous.own.filter(id=>Number.isInteger(id)&&id>=0&&id<TK.length)])];
-      sv.sel=sv.own.includes(previous.sel)?previous.sel:0;
-      if(Array.isArray(previous.skinOwn))sv.skinOwn=[...new Set(previous.skinOwn.filter(id=>Number.isInteger(id)&&id>=0&&id<SKINS.length))];
-      if(Array.isArray(previous.explOwn))sv.explOwn=[...new Set(previous.explOwn.filter(id=>Number.isInteger(id)&&id>=0&&id<EXPLOSIONS.length))];
-      sv.skinSel=sv.skinOwn.includes(previous.skinSel)?previous.skinSel:-1;
-      sv.explSel=sv.explOwn.includes(previous.explSel)?previous.explSel:-1;
-    }else{
-      const legacy=readJson('tanques_v1');
-      if(legacy&&Array.isArray(legacy.own)){
-        sv.own=[...new Set([0,...legacy.own.filter(id=>Number.isInteger(id)&&id>=0&&id<TK.length)])];
-        sv.sel=sv.own.includes(legacy.sel)?legacy.sel:0;
-      }
-    }
-    // Legacy currency is reset on migration as requested previously.
-    sv.coins=0;sv.gems=0;
-  }
-  if(!Array.isArray(sv.skinOwn))sv.skinOwn=[];
-  if(!Array.isArray(sv.explOwn))sv.explOwn=[];
-  sv.skinOwn=[...new Set(sv.skinOwn.filter(id=>Number.isInteger(id)&&id>=0&&id<SKINS.length))];
-  sv.explOwn=[...new Set(sv.explOwn.filter(id=>Number.isInteger(id)&&id>=0&&id<EXPLOSIONS.length))];
-  sv.skinSel=Number.isInteger(sv.skinSel)&&sv.skinOwn.includes(sv.skinSel)?sv.skinSel:-1;
-  sv.explSel=Number.isInteger(sv.explSel)&&sv.explOwn.includes(sv.explSel)?sv.explSel:-1;
-  if(!Array.isArray(sv.own))sv.own=[0];
-  sv.own=[...new Set(sv.own.filter(id=>Number.isInteger(id)&&id>=0&&id<TK.length))];
-  if(!sv.own.includes(0))sv.own.unshift(0);
-  sv.sel=sv.own.includes(sv.sel)?sv.sel:0;
-  sv.name=String(sv.name||'Jugador').trim().slice(0,18)||'Jugador';
-  sv.coins=Number.isFinite(Number(sv.coins))?Number(sv.coins):0;
-  sv.gems=Number.isFinite(Number(sv.gems))?Number(sv.gems):0;
-  // Bono único de 1.000.000 de monedas por perfil.
-  // Se aplica una sola vez también a perfiles existentes; luego se conserva el saldo normal.
-  if(!sv.millionCoinsGrantV1){sv.coins=1000000;sv.millionCoinsGrantV1=true;}
-  if(resetWallet){sv.coins=1000000;sv.gems=0;sv.millionCoinsGrantV1=true}
+  // Inventario y monedas a cero para todos los perfiles al iniciar sesión.
+  // Se conserva únicamente el tanque básico necesario para jugar.
+  sv=freshProfile(email);
+  sv.coins=0;
+  sv.gems=0;
+  sv.own=[0];
+  sv.sel=0;
+  sv.skinOwn=[];
+  sv.skinSel=-1;
+  sv.explOwn=[];
+  sv.explSel=-1;
+  sv.goldPity=0;
+  sv.millionCoinsGrantV1=true;
   sv.email=email;
 }
+
 function finishLogin(message){
   profileActive=true;
   try{sessionStorage.setItem(SESSION_KEY,sv.email)}catch(e){}
