@@ -2094,17 +2094,27 @@ function hostRound(extra){
 }
 function applyRound(rn,m){
   G.rn=rn;G.map=MAPS[m];
+  // El bot Imposible elige un estilo nuevo al comienzo de CADA ronda.
+  // Puede usar cualquier estilo, incluido Aleatorizador, pero no repite el anterior consecutivamente.
+  if(G.bot&&G.lvl===4&&BOT&&BOT.p){
+    const previous=BOT.p.tk;
+    let next=previous;
+    for(let tries=0;tries<12&&next===previous;tries++) next=(Math.random()*TK.length)|0;
+    if(next===previous) next=(previous+1)%TK.length;
+    BOT.p.tk=next;BOT.tk=next;BOT.am=ammoCapacity(TK[next]||TK[0]);BOT.aimResult=null;BOT.aimAt=0;
+  }
   const s=G.map.sp[SLOTS[G.slot]];
   G.x=s.x;G.y=s.y;G.am=ammoCapacity(TK[sv.sel]||TK[0]);G.rl=0;G.rt=performance.now();g.presence({am:G.am,rl:0});G.bl=[];G.alive=true;G.active=true;G.frz=performance.now()+1300;G.last=0;G.lx=null;
   for(const o of opList()){const sp=G.map.sp[SLOTS[o.slot]];o.x=sp.x;o.y=sp.y;o.al=true;o.am=ammoCapacity(TK[o.tk]||TK[0]);o.rl=0;o.rlP=-1;o.peSh=o.pr.sh?o.pr.sh.n:0}
   if(G.bot)botReset(G.map.sp.B);
-  ov('Mapa: '+G.map.n+'<br>¡Prepárate!');setTimeout(()=>{if(G&&G.active&&!G.over)$('#ov').innerHTML=''},1300);
+  ov('Mapa: '+G.map.n+'<br>¡Prepárate!'+(G.bot&&G.lvl===4?'<br>Estilo de Imposible: <b>'+((TK[BOT&&BOT.p?BOT.p.tk:2]||TK[2]).n)+'</b>':''));setTimeout(()=>{if(G&&G.active&&!G.over)$('#ov').innerHTML=''},1300);
   hud();
 }
 function hud(){
   if(!G||!g)return;
+  const scores=g.players().map(p=>(G.bot?'':SE[p.slot]+' ')+pname(p.slot)+' '+(G.sc[p.slot]||0)).join(' — ');
   const s=G.st==='lobby'?'Sala '+G.code+' · '+g.players().length+'/'+g.max+' jugadores'
-    :'['+TK[sv.sel].n+'] '+g.players().map(p=>(G.bot?'':SE[p.slot]+' ')+pname(p.slot)+' '+(G.sc[p.slot]||0)).join(' — ');
+    :(G.bot&&G.lvl===4?'☠ Imposible · '+((TK[BOT&&BOT.p?BOT.p.tk:2]||TK[2]).n)+' · Ronda '+G.rn+' · '+scores:'['+TK[sv.sel].n+'] '+scores);
   const h=$('#hud');if(h.textContent!==s)h.textContent=s;
 }
 function showEnd(ev){hud();ov(ev.win===G.slot?'¡Punto para ti!':ev.win<0?'Empate: nadie gana la ronda':'Punto para '+(G.bot?'':SE[ev.win]+' ')+pname(ev.win))}
