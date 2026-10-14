@@ -689,7 +689,7 @@ body.mobile-game-active .pwa-install-fab{display:none!important}
 <div class="row play-actions"><button class="btn" id="bSearch">🌐 Buscar partida</button><button class="btn alt" id="bCreate">🏠 Crear sala</button></div>
 <div class="row" id="crOpts" hidden><b style="width:100%">¿Cuántos jugadores? (contándote a ti, máximo 4)</b><button class="btn" data-n="2">2</button><button class="btn" data-n="3">3</button><button class="btn" data-n="4">4</button><button class="btn red" id="crCancel">Cancelar</button></div>
 <div class="row"><input id="code" maxlength="4" placeholder="CÓDIGO" aria-label="Código de sala"><button class="btn alt" id="bJoin">🚪 Unirse a sala</button></div>
-<div><b>🤖 Contra un bot</b><div class="row" style='margin:6px 0'><button class='btn' data-l='0'>Fácil</button><button class='btn alt' data-l='1'>Medio</button><button class='btn red' data-l='2'>Difícil</button><button class='btn' data-l='3' style='background:#14182b;color:#fff'>Pesadilla</button><button class='btn' data-l='4' style='background:linear-gradient(135deg,#ff1744,#6a00f4);color:#fff;border:2px solid #ffd54f;box-shadow:0 0 12px #ff174477'>☠ Imposible · +500 🪙</button></div><p class='help'>Los cuatro bots normales usan el estilo Aleatorizador. <b>Imposible</b> predice tus movimientos, esquiva balas y calcula trayectorias de rebote para intentar alcanzarte detrás de los muros. Si le ganas la partida, recibes <b>500 🪙</b>.</p></div>
+<div><b>🤖 Contra un bot</b><div class="row" style='margin:6px 0'><button class='btn' data-l='0'>Fácil</button><button class='btn alt' data-l='1'>Medio</button><button class='btn red' data-l='2'>Difícil</button><button class='btn' data-l='3' style='background:#14182b;color:#fff'>Pesadilla</button><button class='btn' data-l='4' style='background:linear-gradient(135deg,#ff1744,#6a00f4);color:#fff;border:2px solid #ffd54f;box-shadow:0 0 12px #ff174477'>☠ Imposible · +500 🪙</button></div><p class='help'>Todos los bots cambian a un estilo de disparo nuevo al comienzo de cada ronda. <b>Imposible</b> predice tus movimientos, esquiva balas y calcula trayectorias de rebote para intentar alcanzarte detrás de los muros. Si le ganas la partida, recibes <b>500 🪙</b>.</p></div>
 <p class="net" id="net">Conectando…</p>
 <p class="help">En ordenador: muévete con WASD o flechas, apunta con el ratón y dispara con clic. En móvil: joystick izquierdo para moverte, arrastra y suelta el derecho para disparar con puntería, o pulsa Autoapuntar para atacar al rival más cercano. Las balas rebotan. La munición depende de la rareza del estilo. Al quedarte sin balas comienza la recarga automática, que tarda unos segundos; también puedes pulsar R o «Recargar». Gana quien consiga 3 rondas (en salas de 3 o 4 jugadores, la ronda la gana el último tanque en pie). Al terminar la partida te quedas en la sala para jugar otra vez: +150 monedas al ganar, +50 al perder.</p>
 </section>
@@ -1075,7 +1075,7 @@ function renderShop(){
  if(i===2){const misses=Math.max(0,Math.min(9,Number(sv.goldPity)||0)),copy=d.querySelector('.chest-copy');copy.insertAdjacentHTML('beforeend',`<small style="display:block;opacity:1;margin-top:6px;color:#ffe982">${misses>=9?'⭐ La próxima tirada garantiza Épico o superior':`Protección Épica+: ${misses}/9 tiradas sin épico · garantía en ${10-misses}`}</small><div style="flex:none;width:100%;height:8px;background:#ffffff24;border-radius:8px;overflow:hidden;margin-top:4px"><div style="flex:none;height:100%;width:${misses/9*100}%;background:linear-gradient(90deg,#9b4dca,#ffd400);border-radius:8px;transition:width .2s"></div></div>`)};
  [1,10].forEach(n=>{const b=document.createElement('button');b.className='btn'+(n>1?' alt':'');const cost=h.p*n,cur=h.currency==='gems'||h.kind==='gem'?'💎':'🪙',wallet=cur==='💎'?sv.gems:sv.coins;b.textContent='x'+n+' · '+cost+cur;b.disabled=wallet<cost;b.onclick=()=>openChest(i,n);d.appendChild(b)});
  const q=document.createElement('button');q.className='qm';q.textContent='?';q.setAttribute('aria-label','Probabilidades de '+h.n);q.onclick=()=>odds(i);d.appendChild(q);c.appendChild(d)});
- const w=document.createElement('div');w.className='item';w.innerHTML=`<div class='cb' style='background:linear-gradient(135deg,#ff2e93,#ffe03d)'>🎡</div><div><b>Ruleta de la suerte</b><small>Monedas, gemas, reembolsos, skins, explosiones o estilos secretos</small></div>`;const wb=document.createElement('button');wb.className='btn red';wb.textContent=sv.free>0?'Girar GRATIS ('+sv.free+')':'Girar · 180🪙';wb.disabled=!(sv.free>0||sv.coins>=180);wb.onclick=spinWheel;w.appendChild(wb);c.appendChild(w);
+ const w=document.createElement('div');w.className='item';w.innerHTML=`<div class='cb' style='background:linear-gradient(135deg,#ff2e93,#ffe03d)'>🎡</div><div><b>Ruleta de la suerte</b><small>Monedas, gemas, reembolsos, skins, explosiones o estilos secretos</small></div>`;const wb=document.createElement('button');wb.className='btn red';wb.textContent=sv.free>0?'Girar GRATIS ('+sv.free+')':'Girar · 500🪙';wb.disabled=!(sv.free>0||sv.coins>=500);wb.onclick=spinWheel;w.appendChild(wb);c.appendChild(w);
  const iv=$('#inv');iv.innerHTML='';$('#invc').textContent='('+sv.own.length+'/'+TK.length+')';
  TK.forEach((t,i)=>{const own=sv.own.includes(i),e=document.createElement('button');e.className='sc'+(own?'':' lock')+(sv.sel===i?' sel':'');if(own){e.setAttribute('style',rs(t.q));e.innerHTML='<b>'+t.n+'</b><small>'+RAR[t.q][0]+'</small>';e.onclick=()=>{sv.sel=i;save();renderShop()}}else e.innerHTML='<b>???</b><small>'+RAR[t.q][0]+'</small>';iv.appendChild(e)});
  renderCosmeticInventory('skin');renderCosmeticInventory('expl');
@@ -1293,7 +1293,7 @@ if(r.t!=='s'){v.innerHTML=`<div class='res'>${resCard(r)}</div>`+close;$('#revea
 const t=TK[r.id];v.innerHTML=`<div class='res'>${resCard(r)}</div><p>Balas: ${t.k>1?t.k+' a la vez, ':''}${t.b} rebotes · ${FXN[t.fx]} + ${MDN[t.md]}</p><div class='row'><button class='btn alt' id='eq'>Equipar</button>${close}</div>`;
 $('#eq').onclick=e=>{e.preventDefault();e.stopPropagation();sv.sel=r.id;save();renderShop();v.hidden=true};$('#revealClose').onclick=()=>{v.hidden=true;renderShop()}}
 function spinWheel(){
-if(sv.free>0)sv.free--;else{if(sv.coins<300)return;sv.coins-=300}
+if(sv.free>0)sv.free--;else{if(sv.coins<500)return;sv.coins-=500}
 const k=pick([35,18,20,6,15,1.2]);let r;
 if(k===0)r={t:'c',v:100+(Math.random()*301|0)};
 else if(k===1)r={t:'c',v:500+(Math.random()*1001|0)};
@@ -1687,22 +1687,27 @@ async function passwordHash(password,saltHex){
 }
 function safeEqual(a,b){if(typeof a!=='string'||typeof b!=='string'||a.length!==b.length)return false;let x=0;for(let i=0;i<a.length;i++)x|=a.charCodeAt(i)^b.charCodeAt(i);return x===0}
 function readJson(key){try{return JSON.parse(localStorage.getItem(key)||'null')}catch(e){return null}}
-function prepareProfile(email,{resetWallet=false}={}){
-  // Recupera los datos guardados de la cuenta en este navegador.
-  const saved=readJson(PROFILE_PREFIX+email);
-  sv={...freshProfile(email),...(saved&&typeof saved==='object'?saved:{})};
+function prepareProfile(email){
+  // Carga primero el perfil actual y, si no existe, migra el perfil de la versión anterior.
+  // No reiniciar monedas, gemas, inventario ni selección al iniciar sesión.
+  const current=readJson(PROFILE_PREFIX+email);
+  const legacy=readJson('tanques_profile_v2:'+email);
+  const saved=current&&typeof current==='object'?current:(legacy&&typeof legacy==='object'?legacy:null);
+  sv={...freshProfile(email),...(saved||{})};
   sv.email=email;
-  // Mantener la configuración solicitada: recursos y objetos a cero para todos.
-  sv.coins=0;
-  sv.gems=0;
-  sv.own=[0];
-  sv.sel=0;
-  sv.skinOwn=[];
-  sv.skinSel=-1;
-  sv.explOwn=[];
-  sv.explSel=-1;
-  sv.goldPity=0;
-  sv.millionCoinsGrantV1=true;
+
+  // Normalizar los valores guardados sin borrar el progreso válido del jugador.
+  sv.coins=Math.max(0,Math.floor(Number(sv.coins)||0));
+  sv.gems=Math.max(0,Math.floor(Number(sv.gems)||0));
+  sv.free=Math.max(0,Math.floor(Number(sv.free)||0));
+  sv.goldPity=Math.max(0,Math.floor(Number(sv.goldPity)||0));
+  sv.own=Array.isArray(sv.own)?[...new Set(sv.own.filter(id=>Number.isInteger(id)&&id>=0&&id<TK.length))]:[0];
+  if(!sv.own.includes(0))sv.own.unshift(0);
+  if(!sv.own.includes(sv.sel))sv.sel=sv.own[0]||0;
+  sv.skinOwn=Array.isArray(sv.skinOwn)?[...new Set(sv.skinOwn.filter(id=>Number.isInteger(id)&&id>=0&&id<SKINS.length))]:[];
+  if(sv.skinSel!==-1&&!sv.skinOwn.includes(sv.skinSel))sv.skinSel=-1;
+  sv.explOwn=Array.isArray(sv.explOwn)?[...new Set(sv.explOwn.filter(id=>Number.isInteger(id)&&id>=0&&id<EXPLOSIONS.length))]:[];
+  if(sv.explSel!==-1&&!sv.explOwn.includes(sv.explSel))sv.explSel=-1;
 }
 
 function finishLogin(message){
@@ -1735,8 +1740,8 @@ async function submitAuth(event){
       const saltBytes=new Uint8Array(16);crypto.getRandomValues(saltBytes);const salt=hexFromBytes(saltBytes);
       const hash=await passwordHash(password,salt);
       localStorage.setItem(key,JSON.stringify({v:1,salt,hash,createdAt:Date.now()}));
-      prepareProfile(email,{resetWallet:true});
-      finishLogin('Cuenta creada e iniciada. ¡Tienes 1.000.000 de monedas y 0 gemas!');
+      prepareProfile(email);
+      finishLogin('Cuenta creada e iniciada. Tu progreso se guardará automáticamente en este navegador.');
     }else{
       const record=readJson(key);
       if(!record||!record.salt||!record.hash){throw new Error('No existe una cuenta con ese correo en este navegador. Pulsa «Crear cuenta».')}
@@ -2094,27 +2099,25 @@ function hostRound(extra){
 }
 function applyRound(rn,m){
   G.rn=rn;G.map=MAPS[m];
-  // El bot Imposible elige un estilo nuevo al comienzo de CADA ronda.
-  // Puede usar cualquier estilo, incluido Aleatorizador, pero no repite el anterior consecutivamente.
-  if(G.bot&&G.lvl===4&&BOT&&BOT.p){
-    const previous=BOT.p.tk;
-    let next=previous;
-    for(let tries=0;tries<12&&next===previous;tries++) next=(Math.random()*TK.length)|0;
-    if(next===previous) next=(previous+1)%TK.length;
+  // Todos los niveles de bot eligen un estilo nuevo al comienzo de cada ronda.
+  // Puede salir cualquier estilo, incluido Aleatorizador, pero no se repite seguido.
+  if(G.bot&&BOT&&BOT.p){
+    const next=nextBotRoundStyle(BOT.p.tk);
     BOT.p.tk=next;BOT.tk=next;BOT.am=ammoCapacity(TK[next]||TK[0]);BOT.aimResult=null;BOT.aimAt=0;
   }
   const s=G.map.sp[SLOTS[G.slot]];
   G.x=s.x;G.y=s.y;G.am=ammoCapacity(TK[sv.sel]||TK[0]);G.rl=0;G.rt=performance.now();g.presence({am:G.am,rl:0});G.bl=[];G.alive=true;G.active=true;G.frz=performance.now()+1300;G.last=0;G.lx=null;
   for(const o of opList()){const sp=G.map.sp[SLOTS[o.slot]];o.x=sp.x;o.y=sp.y;o.al=true;o.am=ammoCapacity(TK[o.tk]||TK[0]);o.rl=0;o.rlP=-1;o.peSh=o.pr.sh?o.pr.sh.n:0}
   if(G.bot)botReset(G.map.sp.B);
-  ov('Mapa: '+G.map.n+'<br>¡Prepárate!'+(G.bot&&G.lvl===4?'<br>Estilo de Imposible: <b>'+((TK[BOT&&BOT.p?BOT.p.tk:2]||TK[2]).n)+'</b>':''));setTimeout(()=>{if(G&&G.active&&!G.over)$('#ov').innerHTML=''},1300);
+  ov('Mapa: '+G.map.n+'<br>¡Prepárate!'+(G.bot&&BOT&&BOT.p?'<br>Estilo del bot: <b>'+((TK[BOT.p.tk]||TK[0]).n)+'</b>':'') );setTimeout(()=>{if(G&&G.active&&!G.over)$('#ov').innerHTML=''},1300);
   hud();
 }
 function hud(){
   if(!G||!g)return;
   const scores=g.players().map(p=>(G.bot?'':SE[p.slot]+' ')+pname(p.slot)+' '+(G.sc[p.slot]||0)).join(' — ');
+  const botStyle=(BOT&&BOT.p&&TK[BOT.p.tk])?TK[BOT.p.tk].n:TK[0].n;
   const s=G.st==='lobby'?'Sala '+G.code+' · '+g.players().length+'/'+g.max+' jugadores'
-    :(G.bot&&G.lvl===4?'☠ Imposible · '+((TK[BOT&&BOT.p?BOT.p.tk:2]||TK[2]).n)+' · Ronda '+G.rn+' · '+scores:'['+TK[sv.sel].n+'] '+scores);
+    :(G.bot?'🤖 '+LV[G.lvl]+' · '+botStyle+' · Ronda '+G.rn+' · '+scores:'['+TK[sv.sel].n+'] '+scores);
   const h=$('#hud');if(h.textContent!==s)h.textContent=s;
 }
 function showEnd(ev){hud();ov(ev.win===G.slot?'¡Punto para ti!':ev.win<0?'Empate: nadie gana la ronda':'Punto para '+(G.bot?'':SE[ev.win]+' ')+pname(ev.win))}
@@ -2252,6 +2255,12 @@ function botDodgeVector(p,m){
  return{x:dx,y:dy,threat};
 }
 function randomStyleId(){const id=Math.random()*(TK.length-1)|0;return id>=50?id+1:id}
+function nextBotRoundStyle(previous){
+ let next=previous;
+ for(let tries=0;tries<24&&next===previous;tries++)next=(Math.random()*TK.length)|0;
+ if(next===previous)next=(previous+1)%TK.length;
+ return next;
+}
 function botStep(f,now){
  const B=BOT,p=B.p,m=G.map,L=B.lvl;
  if(L===4){botImpossibleStep(f,now);return}
@@ -2354,7 +2363,7 @@ function botImpossibleStep(f,now){
   if(B.am>0&&aimGood&&angleErr<.095&&now-B.last>Math.max(210,t.cd*.66)){
    if(B.am>=ammoCapacity(t))B.rt=now;
    B.am--;B.last=now;
-   p.sh={n:(p.sh?p.sh.n:0)+1,x:p.x,y:p.y,a:p.ta,t:p.tk};
+   p.sh={n:(p.sh?p.sh.n:0)+1,x:p.x,y:p.y,a:p.ta,t:(TK[p.tk]&&TK[p.tk].rnd)?randomStyleId():p.tk};
   }
  }
 }
@@ -2545,7 +2554,7 @@ let t0=performance.now(),lastPaint=0;
   /* Ruleta más económica con recompensas variadas en varias franjas de valor. */
   spinWheel = function(){
     if(sv.free>0) sv.free--;
-    else { if(sv.coins<180)return; sv.coins-=180; }
+    else { if(sv.coins<500)return; sv.coins-=500; }
     const k=pick([40,22,21,5,8,3,1]);let r;
     if(k===0) r={t:'c',v:40+(Math.random()*101|0)};
     else if(k===1) r={t:'c',v:150+(Math.random()*301|0)};
