@@ -618,6 +618,10 @@ body.mobile-game-active .pwa-install-fab{display:none!important}
   body.mobile-game-active #cv { max-height:calc(100dvh - 72px); }
 }
 
+
+.bot-taunt{display:inline-block;margin:7px 0;padding:10px 14px;border:2px solid #ffe03d;border-radius:15px;background:linear-gradient(135deg,#ff2e93,#7c4dff);font-weight:700;color:#fff;text-shadow:0 2px 3px #0008;box-shadow:0 0 18px #ff2e9377;animation:botTauntPop .28s cubic-bezier(.2,.8,.2,1) both}
+@keyframes botTauntPop{from{transform:scale(.7) rotate(-2deg);opacity:0}to{transform:scale(1) rotate(0);opacity:1}}
+
 </style>
 </head>
 <body class="signed-out">
@@ -689,7 +693,7 @@ body.mobile-game-active .pwa-install-fab{display:none!important}
 <div class="row play-actions"><button class="btn" id="bSearch">🌐 Buscar partida</button><button class="btn alt" id="bCreate">🏠 Crear sala</button></div>
 <div class="row" id="crOpts" hidden><b style="width:100%">¿Cuántos jugadores? (contándote a ti, máximo 4)</b><button class="btn" data-n="2">2</button><button class="btn" data-n="3">3</button><button class="btn" data-n="4">4</button><button class="btn red" id="crCancel">Cancelar</button></div>
 <div class="row"><input id="code" maxlength="4" placeholder="CÓDIGO" aria-label="Código de sala"><button class="btn alt" id="bJoin">🚪 Unirse a sala</button></div>
-<div><b>🤖 Contra un bot</b><div class="row" style='margin:6px 0'><button class='btn' data-l='0'>Fácil</button><button class='btn alt' data-l='1'>Medio</button><button class='btn red' data-l='2'>Difícil</button><button class='btn' data-l='3' style='background:#14182b;color:#fff'>Pesadilla</button><button class='btn' data-l='4' style='background:linear-gradient(135deg,#ff1744,#6a00f4);color:#fff;border:2px solid #ffd54f;box-shadow:0 0 12px #ff174477'>☠ Imposible · +500 🪙</button></div><p class='help'>Todos los bots cambian a un estilo de disparo nuevo al comienzo de cada ronda. <b>Imposible</b> predice tus movimientos, esquiva balas y calcula trayectorias de rebote para intentar alcanzarte detrás de los muros. Si le ganas la partida, recibes <b>500 🪙</b>.</p></div>
+<div><b>🤖 Contra un bot</b><div class="row" style='margin:6px 0'><button class='btn' data-l='0'>Fácil</button><button class='btn alt' data-l='1'>Medio</button><button class='btn red' data-l='2'>Difícil</button><button class='btn' data-l='3' style='background:#14182b;color:#fff'>Pesadilla</button><button class='btn' data-l='4' style='background:linear-gradient(135deg,#ff1744,#6a00f4);color:#fff;border:2px solid #ffd54f;box-shadow:0 0 12px #ff174477'>☠ Imposible · +500 🪙</button></div><p class='help'>Todos los bots cambian de estilo en cada ronda y aprenden tus direcciones frecuentes, tus rodeos y tu ritmo de disparo durante la partida. Ahora sus mejoras de combate están duplicadas: movimiento, giro, cadencia, velocidad, tamaño, cantidad de proyectiles y rebotes. Los mapas nuevos son más cerrados y están diseñados para tiros de rebote; los arbustos se atraviesan, se animan al entrar y sirven para esconderse. Si un bot te elimina, puede vacilarte con tu nombre. <b>Imposible</b> es aún más rápido y preciso. Si le ganas la partida, recibes <b>500 🪙</b>.</p></div>
 <p class="net" id="net">Conectando…</p>
 <p class="help">En ordenador: muévete con WASD o flechas, apunta con el ratón y dispara con clic. En móvil: joystick izquierdo para moverte, arrastra y suelta el derecho para disparar con puntería, o pulsa Autoapuntar para atacar al rival más cercano. Las balas rebotan. La munición depende de la rareza del estilo. Al quedarte sin balas comienza la recarga automática, que tarda unos segundos; también puedes pulsar R o «Recargar». Gana quien consiga 3 rondas (en salas de 3 o 4 jugadores, la ronda la gana el último tanque en pie). Al terminar la partida te quedas en la sala para jugar otra vez: +150 monedas al ganar, +50 al perder.</p>
 </section>
@@ -765,6 +769,17 @@ function makeArena(name,theme,layout,bushDefs){
     for(let yy=y;yy<y+bh;yy++)for(let xx=x;xx<x+bw;xx++)taken[yy][xx]=true;
     bushes.push({id,x:x*MT,y:y*MT,w:bw*MT,h:bh*MT,cols:bw,rows:bh});
   }
+  // Si las murallas tapan alguno de los parches diseñados, añadimos vegetación
+  // solo en huecos comprobados del plano, con una lista de ubicaciones de respaldo fija.
+  const fallbackBushes=[[9,2,2,1],[2,9,2,1],[16,9,2,1],[9,17,2,1],[6,8,1,2],[14,8,1,2],[6,12,1,2],[14,12,1,2],[8,4,2,1],[11,15,2,1],[3,6,1,2],[16,13,1,2],[8,16,2,1],[11,3,2,1],[3,11,2,1],[16,10,2,1],[5,9,1,2],[14,10,1,2]];
+  for(const def of fallbackBushes){
+    if(bushes.length>=3)break;
+    const [x,y,bw,bh]=def;let valid=true;
+    for(let yy=y;yy<y+bh;yy++)for(let xx=x;xx<x+bw;xx++)if(xx<=0||yy<=0||xx+bw>MACRO-1||yy+bh>MACRO-1||grid[yy]?.[xx]||taken[yy]?.[xx]||spawnSafe(xx,yy))valid=false;
+    if(!valid)continue;
+    const id=bushes.length+1;for(let yy=y;yy<y+bh;yy++)for(let xx=x;xx<x+bw;xx++)taken[yy][xx]=true;
+    bushes.push({id,x:x*MT,y:y*MT,w:bw*MT,h:bh*MT,cols:bw,rows:bh});
+  }
   return {n:name,theme,w,sp,bushes,bg:null};
 }
 const MAPS=[
@@ -808,7 +823,104 @@ const MAPS=[
     H(5,9,11);H(15,9,11);V(5,9,9);V(15,11,11);
     R(10,10,10,10);
   },[[2,8,2,1],[16,8,2,1],[2,12,2,1],[16,12,2,1],[7,2,1,2],[13,17,1,2],[9,6,2,1],[10,14,2,1],[7,17,2,1]])
+ ];
+/* 40 mapas tácticos nuevos: galerías compactas, murallas conectadas y ángulos
+   pensados para buscar tiros de rebote. Cada plano se construye a mano y se
+   gira/refleja en variantes controladas; no se colocan bloques al azar. */
+const TACTICAL_MAP_NAMES=[
+ 'Pasillo de rebotes','Fortaleza en zigzag','Bastión de esquinas','Galería quebrada','Canal blindado',
+ 'Laberinto de compuertas','Jardín de parapetos','Cámara de rebotes','Muralla serpenteante','Fortín cruzado',
+ 'Anillo de piedra','Cruce de columnas','Bastión doble','Cuatro patios','Túnel lateral',
+ 'Cámara triangular','Corredor de salvas','Laberinto de ángulos','Patio fortificado','Pinball de ruinas',
+ 'Sector espejo','Pasaje blindado','Galería de torres','Barrera partida','Fortaleza angular',
+ 'Túnel en S','Dos patios','Cámara de eco','Ruinas conectadas','Cruce de bastiones II',
+ 'Bastión reflejado','Galería en espiral','Muro de escudos','Patio del rebote','Pasillo serpenteante',
+ 'Laberinto compacto','Sector de torres','Arco de murallas','Cámara final','Ciudadela fragmentada'
 ];
+function makeTacticalArena(index){
+ const pattern=index%10,turn=Math.floor(index/10),mirror=turn>=2;
+ const wallCells=new Set();
+ const P=(x,y)=>wallCells.add(x+','+y);
+ const H0=(y,a,b)=>{for(let x=a;x<=b;x++)P(x,y)};
+ const V0=(x,a,b)=>{for(let y=a;y<=b;y++)P(x,y)};
+ const R0=(x1,y1,x2,y2)=>{for(let y=y1;y<=y2;y++)for(let x=x1;x<=x2;x++)P(x,y)};
+ switch(pattern){
+  case 0: // anillos segmentados: más de una ruta de rebote
+   H0(5,2,7);H0(5,13,18);H0(15,2,7);H0(15,13,18);
+   V0(7,2,5);V0(13,2,5);V0(7,15,18);V0(13,15,18);
+   H0(8,8,10);H0(8,12,12);H0(12,8,10);H0(12,12,12);
+   V0(8,8,9);V0(8,11,12);V0(12,8,9);V0(12,11,12);
+   H0(3,9,11);H0(17,9,11);V0(3,9,11);V0(17,9,11);
+   // Dos piezas asimétricas hacen que las cuatro orientaciones de este plano sean distintas.
+   H0(2,9,10);V0(18,10,11);break;
+  case 1: // pasillos en zigzag con esquinas para rebotes
+   H0(4,2,7);H0(4,12,18);H0(7,5,10);H0(7,13,17);
+   H0(10,2,6);H0(10,11,18);H0(13,4,9);H0(13,14,18);H0(16,2,7);H0(16,12,18);
+   V0(7,4,6);V0(13,7,10);V0(5,10,13);V0(15,13,16);break;
+  case 2: // cajas abiertas: patios cortos conectados por puertas
+   H0(5,3,7);V0(3,5,8);V0(7,3,5);H0(8,3,5);
+   H0(5,13,17);V0(13,5,8);V0(17,3,5);H0(8,15,17);
+   H0(15,3,7);V0(3,12,15);V0(7,15,17);H0(12,3,5);
+   H0(15,13,17);V0(13,12,15);V0(17,15,17);H0(12,15,17);
+   H0(9,8,10);H0(11,10,12);V0(8,9,10);V0(12,10,11);break;
+  case 3: // espiral con varias salidas
+   H0(4,4,11);V0(11,4,7);H0(7,9,16);V0(16,7,11);
+   H0(11,5,13);V0(5,11,15);H0(15,5,12);V0(12,12,15);
+   H0(3,13,17);V0(17,3,6);H0(17,13,17);V0(3,14,17);
+   H0(9,2,4);V0(9,9,10);H0(13,15,18);break;
+  case 4: // canales estrechos paralelos y puentes alternos
+   V0(4,2,7);V0(4,10,17);V0(7,5,10);V0(7,14,18);
+   V0(13,2,6);V0(13,9,14);V0(16,4,10);V0(16,13,18);
+   H0(5,4,6);H0(10,7,13);H0(14,13,16);H0(8,9,12);H0(12,4,7);break;
+  case 5: // bloques agrupados en torres, con corredores claros
+   R0(4,4,5,5);R0(14,4,15,5);R0(4,14,5,15);R0(14,14,15,15);
+   H0(7,3,7);H0(7,13,17);H0(13,3,7);H0(13,13,17);
+   V0(7,7,10);V0(13,10,13);H0(10,4,9);H0(10,11,16);
+   V0(4,8,9);V0(16,11,12);H0(4,8,11);H0(16,9,12);break;
+  case 6: // cuatro compuertas y paredes interiores
+   H0(6,2,8);H0(6,11,18);H0(14,2,8);H0(14,11,18);
+   V0(8,6,9);V0(8,11,14);V0(12,3,6);V0(12,14,17);
+   H0(9,8,11);H0(11,9,12);V0(5,9,11);V0(15,9,11);
+   H0(4,12,15);H0(16,5,8);break;
+  case 7: // zona central cerrada a medias, para rebotes en diagonal
+   H0(5,5,9);H0(5,12,16);H0(15,5,9);H0(15,12,16);
+   V0(5,5,8);V0(16,5,8);V0(5,12,15);V0(16,12,15);
+   H0(8,3,6);H0(8,14,18);H0(12,3,6);H0(12,14,18);
+   V0(9,8,9);V0(11,11,12);H0(9,9,10);H0(11,10,11);break;
+  case 8: // cruces desplazados; pasadizos curvos por segmentos cortos
+   H0(8,2,7);H0(8,10,15);H0(12,5,10);H0(12,13,18);
+   V0(7,8,11);V0(13,9,12);H0(4,8,12);H0(16,8,12);
+   V0(4,5,7);V0(16,13,15);H0(5,13,17);H0(15,3,7);
+   H0(6,3,5);H0(14,15,17);V0(10,3,6);V0(10,14,17);break;
+  default: // fortaleza compartimentada pero conectada con varias brechas
+   R0(5,4,6,6);R0(14,4,15,6);R0(5,14,6,16);R0(14,14,15,16);
+   H0(8,2,5);H0(8,7,12);H0(8,14,18);H0(12,2,6);H0(12,9,13);H0(12,15,18);
+   V0(9,5,7);V0(11,13,15);V0(4,9,11);V0(16,9,11);
+   H0(4,8,10);H0(16,10,12);V0(7,3,4);V0(13,16,17);break;
+ }
+ const transform=(x,y)=>{if(mirror)x=20-x;for(let n=0;n<turn;n++){const q=x;x=20-y;y=q}return [x,y]};
+ const baseBushes=[
+  [[2,8,2,1],[16,8,2,1],[8,2,1,2],[12,17,1,2]],
+  [[3,9,2,1],[15,10,2,1],[8,3,1,2],[11,16,1,2]],
+  [[2,10,2,1],[16,10,2,1],[9,2,2,1],[9,17,2,1]],
+  [[3,8,1,2],[16,11,1,2],[7,3,2,1],[12,16,2,1]],
+  [[2,9,2,1],[16,10,2,1],[8,3,1,2],[12,16,1,2]],
+  [[3,8,2,1],[15,11,2,1],[8,3,2,1],[11,16,2,1]],
+  [[2,9,2,1],[16,10,2,1],[7,3,1,2],[13,16,1,2]],
+  [[3,7,2,1],[15,12,2,1],[8,3,1,2],[12,16,1,2]],
+  [[2,11,2,1],[16,8,2,1],[9,3,2,1],[10,16,2,1]],
+  [[3,9,1,2],[16,10,1,2],[7,3,2,1],[12,16,2,1]]
+ ][pattern];
+ const transformedBushes=baseBushes.map(([x,y,w,h])=>{
+   const pts=[];for(let yy=y;yy<y+h;yy++)for(let xx=x;xx<x+w;xx++)pts.push(transform(xx,yy));
+   const xs=pts.map(v=>v[0]),ys=pts.map(v=>v[1]);
+   return [Math.min(...xs),Math.min(...ys),Math.max(...xs)-Math.min(...xs)+1,Math.max(...ys)-Math.min(...ys)+1];
+ });
+ return makeArena(TACTICAL_MAP_NAMES[index],index%5,({H,V,R})=>{
+   for(const cell of wallCells){const [x,y]=cell.split(',').map(Number),[tx,ty]=transform(x,y);H(ty,tx,tx)}
+ },transformedBushes);
+}
+MAPS.push(...Array.from({length:40},(_,i)=>makeTacticalArena(i)));
 const TK_OLD=[
 {n:'Clásico',c:'#3bceac',p:0,bs:3.2,b:3,r:2,cd:600,d:'Bala media, 3 rebotes'},
 {n:'Rayo',c:'#ffd23f',p:60,bs:5.5,b:2,r:2,cd:700,d:'Bala muy rápida, 2 rebotes'},
@@ -1601,18 +1713,30 @@ function getBG(m){
 }
 function drawBushPatch(c,p,theme){
   c.save();const {x,y,w,h,id}=p;
-  // Sombra baja para integrarlos en el terreno.
-  c.fillStyle='rgba(5,22,10,.42)';c.beginPath();c.ellipse(x+w*.52,y+h*.58,w*.52,h*.43,0,0,Math.PI*2);c.fill();
-  const cols=Math.max(3,Math.round(w/15)),rows=Math.max(2,Math.round(h/14));
-  for(let ry=0;ry<rows;ry++)for(let rx=0;rx<cols;rx++){
-    const seed=(id*97+rx*31+ry*53)%17,px=x+(rx+.5+(seed%3-1)*.08)*w/cols,py=y+(ry+.5+((seed*3)%3-1)*.07)*h/rows;
-    const rxr=w/cols*(.48+(seed%4)*.035),ryr=h/rows*(.43+(seed%3)*.04);
-    const grad=c.createRadialGradient(px-rxr*.24,py-ryr*.35,1,px,py,Math.max(rxr,ryr)*1.45);
-    grad.addColorStop(0,seed%3===0?'#68b85a':seed%3===1?'#3d9844':'#287b3c');grad.addColorStop(.72,seed%2?'#236d35':'#2f833d');grad.addColorStop(1,'#174c2c');
-    c.fillStyle=grad;c.beginPath();c.ellipse(px,py,rxr,ryr,(seed%5-2)*.08,0,Math.PI*2);c.fill();
-    c.strokeStyle='rgba(9,54,24,.72)';c.lineWidth=.65;c.stroke();
-    c.strokeStyle='rgba(194,255,145,.48)';c.lineWidth=.55;c.beginPath();c.arc(px-rxr*.12,py-ryr*.15,Math.min(rxr,ryr)*.58,Math.PI*1.08,Math.PI*1.72);c.stroke();
+  // Sombra orgánica y masa de follaje para que el arbusto parezca vegetación, no una baldosa.
+  c.fillStyle='rgba(4,18,8,.56)';c.beginPath();c.ellipse(x+w*.51,y+h*.62,w*.53,h*.39,-.04,0,Math.PI*2);c.fill();
+  const palettes=[['#3f9b48','#26783a','#174c2b'],['#559f43','#2a7537','#143f28'],['#4b9140','#236d32','#123d27']];
+  const pal=palettes[(id||1)%palettes.length];
+  c.fillStyle=pal[2];c.beginPath();c.ellipse(x+w*.5,y+h*.49,w*.49,h*.43,0,0,Math.PI*2);c.fill();
+  const cols=Math.max(4,Math.round(w/9)),rows=Math.max(3,Math.round(h/9));
+  for(let ry=-1;ry<=rows;ry++)for(let rx=-1;rx<=cols;rx++){
+    const seed=(id*97+rx*31+ry*53+rx*ry*7+900)%101;
+    const jitterX=((seed%13)/13-.5)*.55,jitterY=((seed%17)/17-.5)*.48;
+    const px=x+(rx+.5+jitterX)*w/cols,py=y+(ry+.5+jitterY)*h/rows;
+    if(px<x-2||py<y-2||px>x+w+2||py>y+h+2)continue;
+    const rxr=w/cols*(.45+(seed%5)*.035),ryr=h/rows*(.39+(seed%4)*.045),rot=((seed%9)-4)*.12;
+    const grad=c.createRadialGradient(px-rxr*.3,py-ryr*.42,.3,px,py,Math.max(rxr,ryr)*1.35);
+    grad.addColorStop(0,seed%4===0?'#83c96a':seed%3===0?'#6ab858':pal[0]);
+    grad.addColorStop(.55,pal[0]);grad.addColorStop(.83,pal[1]);grad.addColorStop(1,pal[2]);
+    c.fillStyle=grad;c.beginPath();c.ellipse(px,py,rxr,ryr,rot,0,Math.PI*2);c.fill();
+    c.strokeStyle='rgba(7,44,19,.62)';c.lineWidth=.5;c.stroke();
+    // Nervadura y reflejo húmedo en hojas individuales.
+    c.strokeStyle='rgba(180,239,126,.42)';c.lineWidth=.42;c.beginPath();c.moveTo(px-rxr*.28,py-ryr*.2);c.quadraticCurveTo(px,py-ryr*.18,px+rxr*.3,py+ryr*.17);c.stroke();
+    if(seed%3===0){c.fillStyle='rgba(212,255,161,.32)';c.beginPath();c.ellipse(px-rxr*.25,py-ryr*.3,rxr*.3,ryr*.18,rot-.2,0,Math.PI*2);c.fill()}
   }
+  // Sombras bajo el borde inferior para integrarlo con el suelo.
+  const shade=c.createLinearGradient(0,y+h*.48,0,y+h);shade.addColorStop(0,'rgba(8,31,11,0)');shade.addColorStop(1,'rgba(4,19,8,.45)');
+  c.fillStyle=shade;c.beginPath();c.ellipse(x+w*.5,y+h*.52,w*.48,h*.46,0,0,Math.PI*2);c.fill();
   c.restore();
 }
 function nameTag(x,y,name,col){
@@ -2203,12 +2327,20 @@ function syncHost(){
     if(p.st==='lobby'&&p.mn===G.mn)finishMatch(p.mo?p.mo.win:-1);
   }
 }
+// En partidas exactamente 1v1, usa esquinas opuestas en diagonal: A (arriba-izquierda)
+// contra D (abajo-derecha). En partidas de 3-4 jugadores se mantienen las cuatro esquinas.
+function spawnForSlot(slot){
+  if(!G||!G.map)return {x:0,y:0};
+  const isDuel=!!G.bot||(!!g&&g.players().length===2);
+  const key=isDuel?(slot===0?'A':'D'):(SLOTS[slot]||'A');
+  return G.map.sp[key]||G.map.sp.A;
+}
 function opList(){
   const seen={};
   for(const p of g.players()){
     if(p.isMe)continue;seen[p.id]=1;
     let o=G.ops[p.id];
-    if(!o){const sp=(G.map&&G.map.sp[SLOTS[p.slot]])||{x:0,y:0};o=G.ops[p.id]={id:p.id,slot:p.slot,x:sp.x,y:sp.y,ba:0,ta:0,tk:0,al:true,am:3,rl:0,rlP:-1,ds:{},peSh:p.presence.sh?p.presence.sh.n:0,pr:p.presence}}
+    if(!o){const sp=(G.map&&spawnForSlot(p.slot))||{x:0,y:0};o=G.ops[p.id]={id:p.id,slot:p.slot,x:sp.x,y:sp.y,ba:0,ta:0,tk:0,al:true,am:3,rl:0,rlP:-1,ds:{},peSh:p.presence.sh?p.presence.sh.n:0,pr:p.presence}}
     o.pr=p.presence;o.slot=p.slot;
   }
   for(const id in G.ops)if(!seen[id])delete G.ops[id];
@@ -2225,17 +2357,17 @@ function hostRound(extra){
   G.rn++;g.presence(Object.assign({},extra,{rn:G.rn,map:m,end:null}));applyRound(G.rn,m);
 }
 function applyRound(rn,m){
-  G.rn=rn;G.map=MAPS[m];
+  G.rn=rn;G.map=MAPS[m];G.taunt='';
   // Todos los niveles de bot eligen un estilo nuevo al comienzo de cada ronda.
   // Puede salir cualquier estilo, incluido Aleatorizador, pero no se repite seguido.
   if(G.bot&&BOT&&BOT.p){
     const next=nextBotRoundStyle(BOT.p.tk);
     BOT.p.tk=next;BOT.tk=next;BOT.am=ammoCapacity(TK[next]||TK[0]);BOT.aimResult=null;BOT.aimAt=0;
   }
-  const s=G.map.sp[SLOTS[G.slot]];
+  const s=spawnForSlot(G.slot);
   G.x=s.x;G.y=s.y;G.am=ammoCapacity(TK[sv.sel]||TK[0]);G.rl=0;G.rt=performance.now();g.presence({am:G.am,rl:0});G.bl=[];G.alive=true;G.active=true;G.frz=performance.now()+1300;G.last=0;G.lx=null;
-  for(const o of opList()){const sp=G.map.sp[SLOTS[o.slot]];o.x=sp.x;o.y=sp.y;o.al=true;o.am=ammoCapacity(TK[o.tk]||TK[0]);o.rl=0;o.rlP=-1;o.peSh=o.pr.sh?o.pr.sh.n:0}
-  if(G.bot)botReset(G.map.sp.B);
+  for(const o of opList()){const sp=spawnForSlot(o.slot);o.x=sp.x;o.y=sp.y;o.al=true;o.am=ammoCapacity(TK[o.tk]||TK[0]);o.rl=0;o.rlP=-1;o.peSh=o.pr.sh?o.pr.sh.n:0}
+  if(G.bot)botReset(spawnForSlot(1));
   ov('Mapa: '+G.map.n+'<br>¡Prepárate!'+(G.bot&&BOT&&BOT.p?'<br>Estilo del bot: <b>'+((TK[BOT.p.tk]||TK[0]).n)+'</b>':'') );setTimeout(()=>{if(G&&G.active&&!G.over)$('#ov').innerHTML=''},1300);
   hud();
 }
@@ -2261,7 +2393,13 @@ function hud(){
   const markup=`<span class="score-round"><small>RONDA</small><b>${G.rn||1}</b></span><span class="score-players">${scoreCards}</span>${context}`;
   if(h.innerHTML!==markup)h.innerHTML=markup;
 }
-function showEnd(ev){hud();ov(ev.win===G.slot?'¡Punto para ti!':ev.win<0?'Empate: nadie gana la ronda':'Punto para '+(G.bot?'':SE[ev.win]+' ')+pname(ev.win))}
+function makeBotTaunt(){
+ const raw=String(sv&&sv.name||'Jugador').trim().slice(0,18)||'Jugador';
+ const safe=raw.replace(/[&<>\"']/g,ch=>({'&':'&amp;','<':'&lt;','>':'&gt;','\"':'&quot;',"'":'&#39;'}[ch]));
+ const lines=[`😂 ¡Eres muy malo, ${safe}! 🤡`,`🤣 ¡Eres muy malo, ${safe}! 💀`,`😹 ${safe}, eres muy malo. ¡A entrenar! 🥴`,`💀 ¡Te gané fácil, ${safe}! 😂`];
+ return lines[Math.floor(Math.random()*lines.length)];
+}
+function showEnd(ev){hud();if(G.bot&&ev.win!==G.slot&&ev.win>=0&&G.taunt){ov(`<div class="bot-taunt">${G.taunt}</div><div>🤖 El bot se lleva esta ronda.</div>`);return}ov(ev.win===G.slot?'¡Punto para ti!':ev.win<0?'Empate: nadie gana la ronda':'Punto para '+(G.bot?'':SE[ev.win]+' ')+pname(ev.win))}
 function hostEnd(win){
   G.active=false;
   if(win>=0)G.sc[win]=(G.sc[win]||0)+1;
@@ -2286,7 +2424,7 @@ function finishMatch(win){
   const w=win===G.slot,draw=win<0,gain=G.bot?(w?(G.lvl===4?500:[40,80,140,250][G.lvl]):draw?20:10):(w?150:draw?90:50);
   sv.coins+=gain;const fs=Math.random()<.1;if(fs)sv.free=(sv.free||0)+1;save();
   const showCoinReward=!!G.bot||!(window.matchMedia&&window.matchMedia('(max-width:760px), (pointer:coarse)').matches);
-  const txt=(w?'¡Has ganado la partida!':draw?'Empate':'Has perdido la partida'+(G.bot?'':'<br>Ha ganado '+SE[win]+' '+pname(win)))+(showCoinReward?'<br>+'+gain+' 🪙':'')+(fs?'<br>🎡 ¡Has ganado una ruleta gratis!':'');
+  const txt=(w?'¡Has ganado la partida!':draw?'Empate':'Has perdido la partida'+(G.bot?'':'<br>Ha ganado '+SE[win]+' '+pname(win)))+(G.bot&&!w&&!draw&&G.taunt?'<br><span class="bot-taunt">'+G.taunt+'</span>':'')+(showCoinReward?'<br>+'+gain+' 🪙':'')+(fs?'<br>🎡 ¡Has ganado una ruleta gratis!':'');
   if(G.bot){hud();ov(txt,true);return}
   G.map=null;G.msg=txt;
   if(G.host)g.setOpen(true);
@@ -2361,7 +2499,36 @@ addEventListener('resize',()=>{const playing=!$('#game').hidden;const mobile=win
 let BOT=null;
 function startBot(l){if(g)return;const tk=l===4?2:50;BOT={lvl:l,tk,last:0,tx:0,ty:0,nt:0,px:0,py:0,vx:0,vy:0,aimAt:0,aimResult:null,p:{x:0,y:0,ta:0,ba:0,tk,dr:0,sh:null,name:l===4?'Imposible':'Bot '+LV[l]}};g={isHost:true,max:2,me:{id:'h',slot:0},presence(){},leave(){},onChange(){return()=>{}},onClose(){},setOpen(){},players(){return[{id:'h',slot:0,isMe:true,presence:{}},{id:'bot',slot:1,isMe:false,presence:BOT.p}]}};gOff=null;screen('game');$('#ov').innerHTML='';G=newG({bot:1,lvl:l,code:'bot',st:'play',started:true,host:true,slot:0,mn:1});hostRound({})}
 document.querySelectorAll('[data-l]').forEach(b=>b.onclick=()=>startBot(+b.dataset.l));
-function botReset(o){const B=BOT,p=B.p;p.x=o.x;p.y=o.y;p.ta=Math.atan2(G.y-o.y,G.x-o.x);B.px=G.x;B.py=G.y;B.seenX=G.x;B.seenY=G.y;B.vx=B.vy=0;B.nt=0;B.aimAt=0;B.aimResult=null;B.aimGX=G.x;B.aimGY=G.y;B.am=ammoCapacity(TK[p.tk]||TK[0]);B.rt=performance.now();B.last=performance.now()+[1000,600,250,0,0][B.lvl]}
+function botReset(o){const B=BOT,p=B.p;p.x=o.x;p.y=o.y;p.ta=Math.atan2(G.y-o.y,G.x-o.x);B.px=G.x;B.py=G.y;B.seenX=G.x;B.seenY=G.y;B.vx=B.vy=0;B.nt=0;B.aimAt=0;B.aimResult=null;B.aimGX=G.x;B.aimGY=G.y;B.am=ammoCapacity(TK[p.tk]||TK[0]);B.rt=performance.now();B.last=performance.now()+[1000,600,250,0,0][B.lvl];B.learn=B.learn||{dirBins:Array(8).fill(0),moveX:0,moveY:0,moves:0,avgSpeed:0,orbit:0,aggression:0,shots:0,lastShotN:G.shN||0,lastShotAt:0,fireInterval:900};B.learn.lastShotN=G.shN||0;B.learn.lastShotAt=performance.now();}
+function learnBotFromPlayer(B,now){
+ const L=B.learn||(B.learn={dirBins:Array(8).fill(0),moveX:0,moveY:0,moves:0,avgSpeed:0,orbit:0,aggression:0,shots:0,lastShotN:G.shN||0,lastShotAt:now,fireInterval:900});
+ const dx=G.x-(B.px??G.x),dy=G.y-(B.py??G.y),speed=Math.hypot(dx,dy);
+ if(speed>.22){
+   const ux=dx/speed,uy=dy/speed,sector=(Math.round(Math.atan2(uy,ux)/(Math.PI/4))+8)%8;
+   L.dirBins[sector]=(L.dirBins[sector]||0)+.035;L.moves=Math.min(500,L.moves+1);L.avgSpeed=L.avgSpeed*.94+Math.min(2.4,speed)*.06;
+   L.moveX=L.moveX*.91+ux*.09;L.moveY=L.moveY*.91+uy*.09;
+   const rx=B.p.x-G.x,ry=B.p.y-G.y,rl=Math.hypot(rx,ry)||1,cross=(ux*ry-uy*rx)/rl;
+   L.orbit=L.orbit*.95+Math.max(-1,Math.min(1,cross))*.05;
+ }else{L.moveX*=.996;L.moveY*=.996;L.orbit*=.995}
+ if(now-(L.lastBinDecay||now)>2800){L.dirBins=L.dirBins.map(v=>v*.78);L.lastBinDecay=now}
+ const shotN=G.shN||0;
+ if(shotN>L.lastShotN){const count=shotN-L.lastShotN,dt=Math.max(100,now-(L.lastShotAt||now));L.fireInterval=L.fireInterval*.68+(dt/count)*.32;L.shots=Math.min(300,L.shots+count);L.aggression=Math.min(1,L.aggression+.19*count);L.lastShotAt=now;L.lastShotN=shotN}else L.aggression=Math.max(0,L.aggression-.0014);
+ const total=L.dirBins.reduce((a,b)=>a+b,0)||1,dominant=Math.max(...L.dirBins)/total,sector=L.dirBins.indexOf(Math.max(...L.dirBins));
+ const smoothLen=Math.hypot(L.moveX,L.moveY),smoothX=smoothLen?L.moveX/smoothLen:0,smoothY=smoothLen?L.moveY/smoothLen:0;
+ const freqWeight=dominant>.19?Math.min(.72,(dominant-.125)*2.5):0;
+ let px=smoothX*(1-freqWeight)+Math.cos(sector*Math.PI/4)*freqWeight,py=smoothY*(1-freqWeight)+Math.sin(sector*Math.PI/4)*freqWeight;
+ const pl=Math.hypot(px,py)||1,confidence=Math.min(1,L.moves/32)*Math.min(1,Math.max(0,(dominant-.12)*3.5));
+ return {x:px/pl,y:py/pl,confidence,dominant,aggression:L.aggression,orbit:L.orbit,fireInterval:L.fireInterval};
+}
+function botLearnedTarget(B,x,y,dist){
+ const L=B.learn;if(!L||L.moves<8)return{x,y,confidence:0,aggression:L?L.aggression:0,orbit:L?L.orbit:0};
+ const total=L.dirBins.reduce((a,b)=>a+b,0)||1,dominant=Math.max(...L.dirBins)/total,sector=L.dirBins.indexOf(Math.max(...L.dirBins));
+ const sl=Math.hypot(L.moveX,L.moveY),sx=sl?L.moveX/sl:0,sy=sl?L.moveY/sl:0,fw=dominant>.19?Math.min(.72,(dominant-.125)*2.5):0;
+ let px=sx*(1-fw)+Math.cos(sector*Math.PI/4)*fw,py=sy*(1-fw)+Math.sin(sector*Math.PI/4)*fw;const len=Math.hypot(px,py)||1;px/=len;py/=len;
+ const conf=Math.min(1,L.moves/32)*Math.min(1,Math.max(0,(dominant-.12)*3.5));
+ const lead=conf*Math.min(42,10+dist*.085)*(0.85+Math.min(.3,L.avgSpeed*.15));
+ return{x:x+px*lead,y:y+py*lead,confidence:conf,aggression:L.aggression,orbit:L.orbit};
+}
 function clear(x1,y1,x2,y2){const n=Math.ceil(Math.hypot(x2-x1,y2-y1)/4);for(let i=1;i<n;i++){if(wall(G.map,x1+(x2-x1)*i/n,y1+(y2-y1)*i/n))return false}return true}
 function botSmartWaypoint(m,p,gx,gy,L){
  const sx=Math.max(1,Math.min(N-2,Math.floor(p.x/T))),sy=Math.max(1,Math.min(N-2,Math.floor(p.y/T)));
@@ -2406,40 +2573,43 @@ function botStep(f,now){
  const B=BOT,p=B.p,m=G.map,L=B.lvl;
  if(L===4){botImpossibleStep(f,now);return}
  if(!G.active||!G.alive||now<G.frz||p.dr===G.rn)return;
+ const learned=learnBotFromPlayer(B,now);
  const targetHidden=hiddenByBush(m,G,p);
  if(!targetHidden){B.vx=B.vx*.72+(G.x-B.px)/Math.max(.5,f)*.28;B.vy=B.vy*.72+(G.y-B.py)/Math.max(.5,f)*.28;B.seenX=G.x;B.seenY=G.y}else{B.vx*=.55;B.vy*=.55}
  B.px=G.x;B.py=G.y;const gx=targetHidden?(B.seenX??G.x):G.x,gy=targetHidden?(B.seenY??G.y):G.y;
- const dx0=gx-p.x,dy0=gy-p.y,dist=Math.hypot(dx0,dy0)||1;
- // Predice el punto de impacto de los proyectiles y esquiva antes de que lleguen.
+ const learnedTarget=targetHidden?{x:gx,y:gy,confidence:0,aggression:learned.aggression,orbit:learned.orbit}:botLearnedTarget(B,gx,gy,Math.hypot(gx-p.x,gy-p.y));
+ const moveGX=learnedTarget.x,moveGY=learnedTarget.y;
+ const dx0=moveGX-p.x,dy0=moveGY-p.y,dist=Math.hypot(dx0,dy0)||1;
+ // Aprende direcciones y ritmo de disparo; anticipa hábitos además de la velocidad instantánea.
  const dodge=botDodgeVector(p,m),dodgeX=dodge.x,dodgeY=dodge.y,threat=dodge.threat;
  if(now>B.nt){
-   const waypoint=botSmartWaypoint(m,p,gx,gy,L);
+   const waypoint=botSmartWaypoint(m,p,moveGX,moveGY,L);
    if(waypoint){B.tx=waypoint.x;B.ty=waypoint.y}
    else{
      // Fallback: busca una celda caminable cercana, sin meterse en el muro.
      const dirs=[[1,0],[-1,0],[0,1],[0,-1],[.707,.707],[.707,-.707],[-.707,.707],[-.707,-.707]];let best=null,bs=-1e9;
-     for(const [ax,ay] of dirs){const tx=p.x+ax*62,ty=p.y+ay*62;if(blocked(m,tx,ty)||!clear(m,p.x,p.y,tx,ty))continue;const d=Math.hypot(gx-tx,gy-ty),line=clear(m,tx,ty,gx,gy)?1:0;const score=-Math.abs(d-[118,134,162,188][L])*.4+line*25+(ax*dodgeX+ay*dodgeY)*30+Math.random()*2;if(score>bs){bs=score;best={x:tx,y:ty}}}if(best){B.tx=best.x;B.ty=best.y}else{B.tx=p.x;B.ty=p.y}
+     for(const [ax,ay] of dirs){const tx=p.x+ax*62,ty=p.y+ay*62;if(blocked(m,tx,ty)||!clear(m,p.x,p.y,tx,ty))continue;const d=Math.hypot(moveGX-tx,moveGY-ty),line=clear(m,tx,ty,moveGX,moveGY)?1:0;const score=-Math.abs(d-[118,134,162,188][L])*.4+line*25+(ax*dodgeX+ay*dodgeY)*30+Math.random()*2;if(score>bs){bs=score;best={x:tx,y:ty}}}if(best){B.tx=best.x;B.ty=best.y}else{B.tx=p.x;B.ty=p.y}
    }
    B.nt=now+(L===3?230:340)+Math.random()*250;
  }
- let dx=B.tx-p.x,dy=B.ty-p.y,l=Math.hypot(dx,dy)||1;const sp=[.48,.64,.79,.98][L]*f;
+ let dx=B.tx-p.x,dy=B.ty-p.y,l=Math.hypot(dx,dy)||1;const sp=[.96,1.28,1.58,1.96][L]*f;
  let sx=dx/l*sp,sy=dy/l*sp;
  // Strafing unpredictably prevents the bot from moving in a straight, easy-to-hit line.
- const strafe=Math.sin(now/260+(L*1.7))*(L>=2?.35:.12);sx+=(-dy0/dist)*sp*strafe;sy+=(dx0/dist)*sp*strafe;
- if(threat>.035){const dl=Math.hypot(dodgeX,dodgeY)||1;sx+=dodgeX/dl*sp*Math.min(2.15,threat*1.5);sy+=dodgeY/dl*sp*Math.min(2.15,threat*1.5)}
+ const strafe=Math.sin(now/260+(L*1.7))*(L>=2?.70:.24)+learned.orbit*.22+learned.aggression*.18;sx+=(-dy0/dist)*sp*strafe;sy+=(dx0/dist)*sp*strafe;
+ if(threat>.02){const dl=Math.hypot(dodgeX,dodgeY)||1;sx+=dodgeX/dl*sp*Math.min(4.3,threat*3);sy+=dodgeY/dl*sp*Math.min(4.3,threat*3)}
  let mv=0;if(!blocked(m,p.x+sx,p.y)){p.x+=sx;mv=1}else{B.nt=0;sx=0}if(!blocked(m,p.x,p.y+sy)){p.y+=sy;mv=1}else{B.nt=0;sy=0}if(!mv||l<8)B.nt=0;
  if(mv&&(sx||sy))p.ba=Math.abs(sx)>=Math.abs(sy)?(sx>0?0:Math.PI):(sy>0?Math.PI/2:-Math.PI/2);
  const t=TK[p.tk],tt=Math.min(28,dist/t.bs),ld=[.05,.35,.8,1.15][L];
 
  // Predict player position and lead shots based on measured velocity.
- let txAim=gx+B.vx*tt*ld,tyAim=gy+B.vy*tt*ld;
+ let txAim=learnedTarget.x+B.vx*tt*ld*2,tyAim=learnedTarget.y+B.vy*tt*ld*2;
  // On difficult levels, look for a nearby wall that creates a useful bank shot.
  let directClear=clear(m,p.x,p.y,txAim,tyAim);
  if(!directClear&&L>=2){let bank=null,bankScore=Infinity;for(let yy=-2;yy<=2;yy++)for(let xx=-2;xx<=2;xx++){if(Math.abs(xx)+Math.abs(yy)!==1)continue;const wx=(Math.floor(txAim/T)+xx+.5)*T,wy=(Math.floor(tyAim/T)+yy+.5)*T;if(!wall(m,wx,wy))continue;const mirrorX=xx?2*wx-txAim:txAim,mirrorY=yy?2*wy-tyAim:tyAim;const a=Math.atan2(mirrorY-p.y,mirrorX-p.x);const length=Math.hypot(mirrorX-p.x,mirrorY-p.y);const score=Math.abs(length-dist)+Math.abs(Math.atan2(Math.sin(a-p.ta),Math.cos(a-p.ta))*9);if(clear(m,p.x,p.y,mirrorX,mirrorY)&&score<bankScore){bankScore=score;bank=a}}if(bank!==null)txAim=p.x+Math.cos(bank)*dist,tyAim=p.y+Math.sin(bank)*dist}
- const want=Math.atan2(tyAim-p.y,txAim-p.x);let d=want-p.ta;d=Math.atan2(Math.sin(d),Math.cos(d));const tn=[.055,.1,.19,.34][L]*f;p.ta+=Math.max(-tn,Math.min(tn,d));
- if(B.am<ammoCapacity(t)&&now-B.rt>=Math.max(1800,t.rl*[1.55,1.3,1.08,.95][L])){B.am++;B.rt=now}
- const visible=!targetHidden&&clear(m,p.x,p.y,G.x,G.y),aimTol=[.28,.19,.12,.075][L];
- if(B.am>0&&Math.abs(d)<aimTol&&visible&&now-B.last>t.cd*[2.1,1.35,.95,.72][L]){if(B.am>=ammoCapacity(t))B.rt=now;B.am--;B.last=now;const err=(Math.random()+Math.random()-1)*[.45,.24,.095,.018][L];p.sh={n:(p.sh?p.sh.n:0)+1,x:p.x,y:p.y,a:p.ta+err,t:(TK[p.tk]&&TK[p.tk].rnd)?randomStyleId():p.tk}}
+ const want=Math.atan2(tyAim-p.y,txAim-p.x);let d=want-p.ta;d=Math.atan2(Math.sin(d),Math.cos(d));const tn=[.11,.20,.38,.68][L]*f;p.ta+=Math.max(-tn,Math.min(tn,d));
+ if(B.am<ammoCapacity(t)&&now-B.rt>=Math.max(900,t.rl*[1.55,1.3,1.08,.95][L]*.5)){B.am++;B.rt=now}
+ const visible=!targetHidden&&clear(m,p.x,p.y,learnedTarget.x,learnedTarget.y),aimTol=[.14,.095,.06,.0375][L];
+ if(B.am>0&&Math.abs(d)<aimTol&&visible&&now-B.last>Math.max(100,t.cd*[2.1,1.35,.95,.72][L]*.5)){if(B.am>=ammoCapacity(t))B.rt=now;B.am--;B.last=now;const err=(Math.random()+Math.random()-1)*[.225,.12,.0475,.009][L];p.sh={n:(p.sh?p.sh.n:0)+1,x:p.x,y:p.y,a:p.ta+err,t:(TK[p.tk]&&TK[p.tk].rnd)?randomStyleId():p.tk}}
 }
 
 
@@ -2471,41 +2641,44 @@ function botImpossibleFindShot(p,m,tx,ty,vx,vy){
 function botImpossibleStep(f,now){
  const B=BOT,p=B.p,m=G.map;
  if(!G.active||!G.alive||now<G.frz||p.dr===G.rn)return;
+ const learned=learnBotFromPlayer(B,now);
  const targetHidden=hiddenByBush(m,G,p);
  if(!targetHidden){B.vx=B.vx*.72+(G.x-B.px)/Math.max(.5,f)*.28;B.vy=B.vy*.72+(G.y-B.py)/Math.max(.5,f)*.28;B.seenX=G.x;B.seenY=G.y}else{B.vx*=.55;B.vy*=.55}
  B.px=G.x;B.py=G.y;const gx=targetHidden?(B.seenX??G.x):G.x,gy=targetHidden?(B.seenY??G.y):G.y;
- const dx=gx-p.x,dy=gy-p.y,dist=Math.hypot(dx,dy)||1;
+ const learnedTarget=targetHidden?{x:gx,y:gy,confidence:0,aggression:learned.aggression,orbit:learned.orbit}:botLearnedTarget(B,gx,gy,Math.hypot(gx-p.x,gy-p.y));
+ const txLearn=learnedTarget.x,tyLearn=learnedTarget.y;
+ const dx=txLearn-p.x,dy=tyLearn-p.y,dist=Math.hypot(dx,dy)||1;
  const danger=botDodgeVector(p,m),dlen=Math.hypot(danger.x,danger.y)||1;
  // Calcula rutas navegables y cambia de posición con frecuencia para evitar que le apunten fácilmente.
  if(now>B.nt){
-  const wp=botSmartWaypoint(m,p,gx,gy,3);
+  const wp=botSmartWaypoint(m,p,txLearn,tyLearn,3);
   if(wp){B.tx=wp.x;B.ty=wp.y}else{B.tx=p.x+(dy/dist)*90;B.ty=p.y-(dx/dist)*90}
   B.nt=now+170+Math.random()*110;
  }
  let mx=B.tx-p.x,my=B.ty-p.y,ml=Math.hypot(mx,my)||1;
- const moveSpeed=1.16*f;
+ const moveSpeed=2.32*f;
  let sx=mx/ml*moveSpeed,sy=my/ml*moveSpeed;
- const strafe=Math.sin(now/185+1.7)*.31;
+ const strafe=Math.sin(now/185+1.7)*.62+learned.orbit*.28+learned.aggression*.2;
  sx+=(-dy/dist)*moveSpeed*strafe;sy+=(dx/dist)*moveSpeed*strafe;
- if(danger.threat>.015){const evade=Math.min(2.4,.55+danger.threat*1.75);sx+=danger.x/dlen*moveSpeed*evade;sy+=danger.y/dlen*moveSpeed*evade}
+ if(danger.threat>.015){const evade=Math.min(4.8,1.1+danger.threat*3.5);sx+=danger.x/dlen*moveSpeed*evade;sy+=danger.y/dlen*moveSpeed*evade}
  let moved=false;
  if(!blocked(m,p.x+sx,p.y)){p.x+=sx;moved=true}else B.nt=0;
  if(!blocked(m,p.x,p.y+sy)){p.y+=sy;moved=true}else B.nt=0;
  if(moved&&(sx||sy))p.ba=Math.abs(sx)>=Math.abs(sy)?(sx>0?0:Math.PI):(sy>0?Math.PI/2:-Math.PI/2);
 
  // Busca un tiro útil cada ~180 ms o si el jugador ha cambiado mucho de posición.
- if(now>=B.aimAt||Math.hypot(gx-B.aimGX,gy-B.aimGY)>24||!B.aimResult){
-  B.aimResult=targetHidden?null:botImpossibleFindShot(p,m,gx,gy,B.vx,B.vy);
-  B.aimAt=now+175;B.aimGX=gx;B.aimGY=gy;
+ if(now>=B.aimAt||Math.hypot(txLearn-B.aimGX,tyLearn-B.aimGY)>18||!B.aimResult){
+  B.aimResult=targetHidden?null:botImpossibleFindShot(p,m,txLearn,tyLearn,B.vx*2,B.vy*2);
+  B.aimAt=now+87;B.aimGX=txLearn;B.aimGY=tyLearn;
  }
  const aim=B.aimResult;
- if(aim){let turn=aim.a-p.ta;turn=Math.atan2(Math.sin(turn),Math.cos(turn));p.ta+=Math.max(-.46*f,Math.min(.46*f,turn));
+ if(aim){let turn=aim.a-p.ta;turn=Math.atan2(Math.sin(turn),Math.cos(turn));p.ta+=Math.max(-.92*f,Math.min(.92*f,turn));
   const angleErr=Math.abs(Math.atan2(Math.sin(aim.a-p.ta),Math.cos(aim.a-p.ta)));
   const t=TK[p.tk]||TK[2];
   // Rebote tiene siete rebotes, por lo que puede alcanzar blancos tras cubrirse detrás de una pared.
-  if(B.am<ammoCapacity(t)&&now-B.rt>=Math.max(1450,t.rl*.78)){B.am++;B.rt=now}
-  const aimGood=aim.err<18.5;
-  if(B.am>0&&aimGood&&angleErr<.095&&now-B.last>Math.max(210,t.cd*.66)){
+  if(B.am<ammoCapacity(t)&&now-B.rt>=Math.max(725,t.rl*.39)){B.am++;B.rt=now}
+  const aimGood=aim.err<9.25;
+  if(B.am>0&&aimGood&&angleErr<.0475&&now-B.last>Math.max(105,t.cd*.33)){
    if(B.am>=ammoCapacity(t))B.rt=now;
    B.am--;B.last=now;
    p.sh={n:(p.sh?p.sh.n:0)+1,x:p.x,y:p.y,a:p.ta,t:(TK[p.tk]&&TK[p.tk].rnd)?randomStyleId():p.tk};
@@ -2516,10 +2689,53 @@ function botImpossibleStep(f,now){
 /* Física */
 const wall=(m,x,y)=>{const tx=x/T|0,ty=y/T|0;return tx<0||ty<0||tx>=N||ty>=N||m.w[ty][tx]};
 const blocked=(m,x,y)=>wall(m,x-4.5,y-4.5)||wall(m,x+4.5,y-4.5)||wall(m,x-4.5,y+4.5)||wall(m,x+4.5,y+4.5);
+const BUSH_FX=[];
+function updateBushTransitions(now){
+  if(!G||!G.map)return;
+  if(G._bushTrackMap!==G.map){G._bushTrackMap=G.map;G._bushTrack={};BUSH_FX.length=0;return}
+  const track=(key,obj,color)=>{
+    if(!obj||!Number.isFinite(obj.x)||!Number.isFinite(obj.y))return;
+    const patch=bushAt(G.map,obj.x,obj.y),id=patch?patch.id:0,prev=G._bushTrack[key]||0;
+    if(id&&id!==prev){BUSH_FX.push({x:obj.x,y:obj.y,born:now,life:720,seed:(id*17+now%997),color:color||'#a6e86c'});if(BUSH_FX.length>20)BUSH_FX.shift()}
+    G._bushTrack[key]=id;
+  };
+  track('player',G,G.bot?(TK[sv.sel]||TK[0]).c:SC[G.slot]);
+  for(const o of Object.values(G.ops))if(o.al)track('p'+o.id,o,SC[o.slot]);
+}
+function drawBushWind(m,now){
+  if(!m||!m.bushes)return;
+  cx.save();
+  for(const p of m.bushes){
+    // Hojas pequeñas movidas por una brisa; la capa se pinta en tiempo real aunque el suelo esté cacheado.
+    for(let i=0;i<5;i++){
+      const phase=now*.00125+p.id*1.73+i*2.11;
+      const fx=((i*37+p.id*13)%97)/97,fy=((i*61+p.id*19)%89)/89;
+      const x=p.x+fx*p.w+Math.sin(phase)*1.8,y=p.y+fy*p.h+Math.cos(phase*.83)*1.15;
+      cx.save();cx.translate(x,y);cx.rotate(Math.sin(phase)*.45);cx.globalAlpha=.12+.08*(.5+.5*Math.sin(phase*1.7));
+      cx.fillStyle=i%2?'#b2e879':'#6dbc57';cx.beginPath();cx.ellipse(0,0,1.9,.72,0,0,Math.PI*2);cx.fill();cx.restore();
+    }
+  }
+  cx.restore();
+}
+function drawBushEntryFX(now){
+  for(let i=BUSH_FX.length-1;i>=0;i--){
+    const f=BUSH_FX[i],u=(now-f.born)/f.life;if(u>=1){BUSH_FX.splice(i,1);continue}
+    const fade=1-u,r=3+u*18;
+    cx.save();cx.globalAlpha=fade*.65;cx.strokeStyle='#b9f77b';cx.lineWidth=.85;cx.beginPath();cx.arc(f.x,f.y,r,0,Math.PI*2);cx.stroke();
+    cx.globalAlpha=fade*.88;
+    for(let j=0;j<8;j++){
+      const a=j*Math.PI/4+f.seed*.013,travel=u*(10+(j%3)*3),x=f.x+Math.cos(a)*travel,y=f.y+Math.sin(a)*travel-u*4+(j%2?2:-1);
+      cx.save();cx.translate(x,y);cx.rotate(a+u*2.2);cx.fillStyle=j%2?'#70bf49':'#c7f58c';cx.beginPath();cx.ellipse(0,0,1.9*(1-u*.35),.78*(1-u*.3),0,0,Math.PI*2);cx.fill();cx.restore();
+    }
+    cx.restore();
+  }
+}
 function spawnShot(o,own,ds){
   if(ds)ds.rc=1;flash(o.x+Math.cos(o.a)*10,o.y+Math.sin(o.a)*10,o.a,(TK[o.t]||TK[0]).c);
-  const t=TK[o.t]||TK[0],as=t.k>1?Array.from({length:t.k},(_,i)=>(i-(t.k-1)/2)*t.sp):[0];
-  as.forEach(d=>{const a=o.a+d,c=Math.cos(a),s=Math.sin(a);G.bl.push({x:o.x+c*9,y:o.y+s*9,vx:c*t.bs,vy:s*t.bs,b:t.b,r:t.r,age:0,own,c:t.c,fx:t.fx,pb:t.b,r0:t.r,md:t.md,sh:t.sh,expl:Number.isInteger(o.expl)?o.expl:-1})});
+  const t=TK[o.t]||TK[0],overclock=!!(G.bot&&!own),count=overclock?Math.min(10,Math.max(2,Math.round(t.k*2))):Math.max(1,Math.round(t.k));
+  const spread=t.sp*(overclock?1.5:1),as=count>1?Array.from({length:count},(_,i)=>(i-(count-1)/2)*spread):[0];
+  const speed=t.bs*(overclock?2:1),radius=Math.min(18,t.r*(overclock?2:1)),bounces=t.b*(overclock?2:1);
+  as.forEach(d=>{const a=o.a+d,c=Math.cos(a),s=Math.sin(a);G.bl.push({x:o.x+c*9,y:o.y+s*9,vx:c*speed,vy:s*speed,b:bounces,r:radius,age:0,own,c:t.c,fx:t.fx,pb:bounces,r0:radius,md:t.md,sh:t.sh,expl:Number.isInteger(o.expl)?o.expl:-1})});
 }
 function step(f){
   if(G.bot)botStep(f,performance.now());const m=G.map,ol=opList();
@@ -2557,9 +2773,10 @@ function step(f){
     b.age+=f;fxb(b,f);
     if(b.b<0||b.age>900){fxEnd(b);G.bl.splice(i,1);continue}
     if(G.bot&&G.active&&BOT.p.dr!==G.rn&&Math.hypot(b.x-BOT.p.x,b.y-BOT.p.y)<5+b.r&&(b.own||b.age>25)){BOT.p.dr=G.rn;boom(BOT.p.x,BOT.p.y,'#ff9f43',sv.explSel);SHK=Math.max(SHK,4);G.bl.splice(i,1);continue}if(G.alive&&G.active&&(!b.own||b.age>25)&&Math.hypot(b.x-G.x,b.y-G.y)<5+b.r){
-      G.alive=false;boom(G.x,G.y,'#ff5252',b.expl);SHK=4;g.presence({dr:G.rn,deathFx:b.expl,skin:sv.skinSel});G.bl.splice(i,1);hud();
+      G.alive=false;boom(G.x,G.y,'#ff5252',b.expl);SHK=4;if(G.bot&&!b.own)G.taunt=makeBotTaunt();g.presence({dr:G.rn,deathFx:b.expl,skin:sv.skinSel});G.bl.splice(i,1);hud();
     }
   }
+  updateBushTransitions(performance.now());
   if(G.alive&&G.map){
     const k=[Math.round(G.x*10),Math.round(G.y*10),Math.round(G.ta*50),G.ba].join();
     if(k!==G.lx){G.lx=k;g.presence({x:+G.x.toFixed(1),y:+G.y.toFixed(1),ta:+G.ta.toFixed(2),ba:G.ba,tk:sv.sel})}
@@ -2586,6 +2803,7 @@ function render1(){
   if(G.alive){drawTank(cx,G.x,G.y,G.ba,G.ta,col,G.ds);drawTankSkin(G.x,G.y,sv.skinSel,col,G.ds&&Number.isFinite(G.ds.da)?G.ds.da:G.ba,G.ta)}
   for(const o of ops)if(o.al&&!hiddenByBush(G.map,o,G)){drawTank(cx,o.x,o.y,o.ba,o.ta,(TK[o.tk]||TK[0]).c,o.ds);drawTankSkin(o.x,o.y,o.pr&&o.pr.skin,(TK[o.tk]||TK[0]).c,o.ds&&Number.isFinite(o.ds.da)?o.ds.da:o.ba,o.ta)}
   G.bl.forEach(drawBullet);
+  drawBushWind(G.map,performance.now());drawBushEntryFX(performance.now());
   nameTag(G.x,G.y,sv.name||'Jugador',G.bot?TK[sv.sel].c:SC[G.slot]);
   for(const o of ops){if(o.al&&hiddenByBush(G.map,o,G))continue;
     const opName=o.pr&&o.pr.name?o.pr.name:'Jugador '+(o.slot+1);
