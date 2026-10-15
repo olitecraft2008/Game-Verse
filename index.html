@@ -693,7 +693,7 @@ body.mobile-game-active .pwa-install-fab{display:none!important}
 <div class="row play-actions"><button class="btn" id="bSearch">🌐 Buscar partida</button><button class="btn alt" id="bCreate">🏠 Crear sala</button></div>
 <div class="row" id="crOpts" hidden><b style="width:100%">¿Cuántos jugadores? (contándote a ti, máximo 4)</b><button class="btn" data-n="2">2</button><button class="btn" data-n="3">3</button><button class="btn" data-n="4">4</button><button class="btn red" id="crCancel">Cancelar</button></div>
 <div class="row"><input id="code" maxlength="4" placeholder="CÓDIGO" aria-label="Código de sala"><button class="btn alt" id="bJoin">🚪 Unirse a sala</button></div>
-<div><b>🤖 Contra un bot</b><div class="row" style='margin:6px 0'><button class='btn' data-l='0'>Fácil</button><button class='btn alt' data-l='1'>Medio</button><button class='btn red' data-l='2'>Difícil</button><button class='btn' data-l='3' style='background:#14182b;color:#fff'>Pesadilla</button><button class='btn' data-l='4' style='background:linear-gradient(135deg,#ff1744,#6a00f4);color:#fff;border:2px solid #ffd54f;box-shadow:0 0 12px #ff174477'>☠ Imposible · +500 🪙</button></div><p class='help'>Todos los bots cambian de estilo en cada ronda y aprenden tus direcciones frecuentes, tus rodeos y tu ritmo de disparo durante la partida. Ahora sus mejoras de combate están duplicadas: movimiento, giro, cadencia, velocidad, tamaño, cantidad de proyectiles y rebotes. Los mapas nuevos son más cerrados y están diseñados para tiros de rebote; los arbustos se atraviesan, se animan al entrar y sirven para esconderse. Si un bot te elimina, puede vacilarte con tu nombre. <b>Imposible</b> es aún más rápido y preciso. Si le ganas la partida, recibes <b>500 🪙</b>.</p></div>
+<div><b>🤖 Contra un bot</b><div class="row" style='margin:6px 0'><button class='btn' data-l='0'>Fácil</button><button class='btn alt' data-l='1'>Medio</button><button class='btn red' data-l='2'>Difícil</button><button class='btn' data-l='3' style='background:#14182b;color:#fff'>Pesadilla</button><button class='btn' data-l='4' style='background:linear-gradient(135deg,#ff1744,#6a00f4);color:#fff;border:2px solid #ffd54f;box-shadow:0 0 12px #ff174477'>☠ Imposible · +500 🪙</button></div><p class='help'>Todos los bots cambian de estilo en cada ronda y aprenden tus direcciones frecuentes, tus rodeos y tu ritmo de disparo. Todos los bots intentan esquivar algunas balas sin hacerlo demasiado; la esquiva más precisa y predictiva es exclusiva de Imposible. Todos mantienen el aprendizaje por ronda. Los mapas nuevos son más cerrados y están diseñados para tiros de rebote; los arbustos se atraviesan, se animan al entrar y sirven para esconderse. Si un bot te elimina, puede vacilarte con tu nombre. <b>Imposible</b> es aún más rápido y preciso. Si le ganas la partida, recibes <b>500 🪙</b>.</p></div>
 <p class="net" id="net">Conectando…</p>
 <p class="help">En ordenador: muévete con WASD o flechas, apunta con el ratón y dispara con clic. En móvil: joystick izquierdo para moverte, arrastra y suelta el derecho para disparar con puntería, o pulsa Autoapuntar para atacar al rival más cercano. Las balas rebotan. La munición depende de la rareza del estilo. Al quedarte sin balas comienza la recarga automática, que tarda unos segundos; también puedes pulsar R o «Recargar». Gana quien consiga 3 rondas (en salas de 3 o 4 jugadores, la ronda la gana el último tanque en pie). Al terminar la partida te quedas en la sala para jugar otra vez: +150 monedas al ganar, +50 al perder.</p>
 </section>
@@ -2703,7 +2703,11 @@ function botStep(f,now){
  // Recarga progresiva
  if(B.am<cap&&now-B.rt>=Math.max(C.rlMin,t.rl*C.rl)){B.am++;B.rt=now}
  const retreat=B.am<=0||(L>=2&&B.am<=1&&cap>=3&&pressure>.45);
- const th=botBuildThreats(p,C,now);
+ const dodgeFactor=[.30,.40,.53,.68,1][L];
+ // Todos detectan balas reales y se apartan con moderación; solo Imposible calcula además la línea de tiro anticipada.
+ const threatCfg=L===4?C:{...C,aimLine:0};
+ const th=botBuildThreats(p,threatCfg,now);
+ if(L<4)for(const threat of th)threat.w*=dodgeFactor;
  // ---- Destino táctico ----
  if(Math.hypot((B.tx||0)-p.x,(B.ty||0)-p.y)<7)B.nt=0;
  if(now>B.nt||B.wpRetreat!==retreat){
@@ -2881,7 +2885,7 @@ function step(f){
     }
     b.age+=f;fxb(b,f);
     if(b.b<0||b.age>900){fxEnd(b);G.bl.splice(i,1);continue}
-    if(G.bot&&G.active&&!b.botShot&&BOT.p.dr!==G.rn&&Math.hypot(b.x-BOT.p.x,b.y-BOT.p.y)<5+b.r&&(b.own||b.age>25)){BOT.p.dr=G.rn;boom(BOT.p.x,BOT.p.y,'#ff9f43',sv.explSel);SHK=Math.max(SHK,4);G.bl.splice(i,1);continue}if(G.alive&&G.active&&(!b.own||b.age>25)&&Math.hypot(b.x-G.x,b.y-G.y)<5+b.r){
+    if(G.bot&&G.active&&!b.botShot&&BOT.p.dr!==G.rn&&Math.hypot(b.x-BOT.p.x,b.y-BOT.p.y)<5+b.r&&(b.own||b.age>25)){BOT.p.dr=G.rn;boom(BOT.p.x,BOT.p.y,'#ff9f43',sv.explSel);SHK=Math.max(SHK,4);G.bl.splice(i,1);continue}if(G.alive&&G.active&&!b.own&&b.age>25&&Math.hypot(b.x-G.x,b.y-G.y)<5+b.r){
       G.alive=false;boom(G.x,G.y,'#ff5252',b.expl);SHK=4;if(G.bot&&!b.own)G.taunt=makeBotTaunt();g.presence({dr:G.rn,deathFx:b.expl,skin:sv.skinSel});G.bl.splice(i,1);hud();
     }
   }
@@ -2936,10 +2940,10 @@ let t0=performance.now(),lastPaint=0;
 (function loop(t){
   requestAnimationFrame(loop);
   const mobile=!!(window.matchMedia&&window.matchMedia('(pointer:coarse), (max-width:760px)').matches);
-  const interval=mobile?1000/45:1000/60;
+  const interval=1000/60;
   if(lastPaint&&t-lastPaint<interval)return;
   const elapsed=lastPaint?Math.min(48,t-lastPaint):16.667;lastPaint=t;t0=t;
-  const f=Math.min(mobile?2.5:2,elapsed/16.667);
+  const f=Math.min(2.5,elapsed/16.667);
   if(G&&G.started&&G.map&&g)step(f);
   if(G&&G.map)render();
 })(t0);
@@ -4154,5 +4158,148 @@ body.game-screen-active #game:fullscreen>.wrap{width:calc(100vw - 16px);height:c
 })();
 </script>
 
+
+<!-- NERF ESPECÍFICO EXÓTICOS Y SECRETOS -->
+<script>
+/* Ajuste de equilibrio específico para estilos Exóticos y Secretos.
+   Conserva la identidad de cada habilidad, pero reduce sus picos de poder. */
+(function(){
+  if(typeof TK==='undefined'||!Array.isArray(TK))return;
+  const tuning={
+    6:{speed:.90,size:.87,bounces:.80,spread:.72,cooldown:1.14,reload:1.16,maxBounces:5,maxShots:2,ability:.78,fragmentSpeed:.82,fragmentSize:.82},
+    7:{speed:.84,size:.80,bounces:.70,spread:.68,cooldown:1.20,reload:1.23,maxBounces:4,maxShots:2,ability:.64,fragmentSpeed:.70,fragmentSize:.70}
+  };
+  TK.forEach(t=>{
+    const cfg=tuning[t.q];if(!cfg||t._rareNerfed)return;
+    t.bs=Math.max(2.25,+((Number(t.bs)||3.2)*cfg.speed).toFixed(2));
+    t.r=Math.max(1.25,+((Number(t.r)||2)*cfg.size).toFixed(2));
+    t.b=Math.max(1,Math.min(cfg.maxBounces,Math.round((Number(t.b)||1)*cfg.bounces)));
+    t.k=Math.max(1,Math.min(cfg.maxShots,Math.round(Number(t.k)||1)));
+    t.sp=Math.max(0,+((Number(t.sp)||0)*cfg.spread).toFixed(3));
+    t.cd=Math.min(2200,Math.round((Number(t.cd)||600)*cfg.cooldown));
+    t.rl=Math.min(4800,Math.round((Number(t.rl)||900)*cfg.reload));
+    t.rareAbilityScale=cfg.ability;
+    t._rareNerfed=true;
+  });
+
+  // Marca los disparos según rareza para moderar también su habilidad especial.
+  if(typeof spawnShot==='function'&&!spawnShot._rareNerfed){
+    const baseSpawnShot=spawnShot;
+    const wrap=function(o,own,ds){
+      const start=G&&Array.isArray(G.bl)?G.bl.length:0;
+      const result=baseSpawnShot(o,own,ds);
+      if(!G||!Array.isArray(G.bl))return result;
+      const style=TK[Number(o&&o.t)]||TK[0],q=style&&style.q;
+      if(q>=6){
+        const cfg=tuning[q];
+        for(let i=start;i<G.bl.length;i++){
+          const b=G.bl[i];b.rareQ=q;b.rareAbilityScale=cfg.ability;
+          // Las balas conservan el diseño visual, pero el área de impacto queda moderada.
+          b.r=Math.max(1.15,b.r*cfg.size);b.r0=b.r;
+          b.b=Math.min(b.b,cfg.maxBounces);b.pb=b.b;
+        }
+      }
+      return result;
+    };
+    wrap._rareNerfed=true;spawnShot=wrap;
+  }
+
+  // Reduce el movimiento/aceleración de la habilidad exótica/secreta y limita fragmentos.
+  if(typeof fxn==='function'&&!fxn._rareNerfed){
+    const baseFxN=fxn;
+    const wrap=function(b,f,v,a){
+      const q=Number(b&&b.rareQ)||0,cfg=tuning[q];
+      if(!cfg||!G||!Array.isArray(G.bl))return baseFxN(b,f,v,a);
+      const start=G.bl.length;
+      const result=baseFxN(b,f*cfg.ability,v,a);
+      const made=G.bl.splice(start);
+      const child=made[0];
+      if(child){
+        child.rareQ=q;child.rareAbilityScale=cfg.ability;
+        child.vx*=cfg.fragmentSpeed;child.vy*=cfg.fragmentSpeed;
+        child.r=Math.max(1.05,(Number(child.r)||1.5)*cfg.fragmentSize);child.r0=child.r;
+        child.b=1;child.pb=1;child.pn=1;child.fx=0;child.ch=1;
+        G.bl.push(child);
+      }
+      return result;
+    };
+    wrap._rareNerfed=true;fxn=wrap;
+  }
+
+  // Las habilidades con explosión/fragmentación crean menos balas secundarias.
+  if(typeof fxEnd==='function'&&!fxEnd._rareNerfed){
+    const baseFxEnd=fxEnd;
+    const wrap=function(b){
+      const q=Number(b&&b.rareQ)||0,cfg=tuning[q];
+      if(!cfg||!G||!Array.isArray(G.bl))return baseFxEnd(b);
+      const start=G.bl.length;
+      const result=baseFxEnd(b);
+      const made=G.bl.splice(start);
+      const child=made[0];
+      if(child){
+        child.rareQ=q;child.rareAbilityScale=cfg.ability;
+        child.vx*=cfg.fragmentSpeed;child.vy*=cfg.fragmentSpeed;
+        child.r=Math.max(1.05,(Number(child.r)||1.5)*cfg.fragmentSize);child.r0=child.r;
+        child.b=1;child.pb=1;child.pn=1;child.fx=0;child.ch=1;
+        G.bl.push(child);
+      }
+      return result;
+    };
+    wrap._rareNerfed=true;fxEnd=wrap;
+  }
+  console.info('Game Verse: habilidades Exóticas y Secretas equilibradas.');
+})();
+
+</script>
+<script>
+/* Muros rompibles: única mecánica conservada de la actualización Ultimate. */
+(function(){
+  'use strict';
+  if(typeof G==='undefined'||typeof wl!=='function'||typeof wall!=='function') return;
+  const blocks=new WeakMap();
+  const baseWl=wl;
+  function setup(m){
+    if(!m||!m.w)return null;
+    let data=blocks.get(m); if(data)return data;
+    const map=new Map(), tile=(typeof T==='number'?T:12), n=m.w.length;
+    for(let y=2;y<n-2;y+=2)for(let x=2;x<n-2;x+=2){
+      if(!m.w[y]?.[x]||!m.w[y+1]?.[x]||!m.w[y]?.[x+1]||!m.w[y+1]?.[x+1])continue;
+      if(typeof m.sp!=='undefined'&&Object.values(m.sp||{}).some(p=>Math.hypot((x+1)*tile-p.x,(y+1)*tile-p.y)<94))continue;
+      map.set(x+','+y,{x,y,hp:3,max:3,last:0});
+    }
+    data={map,tile};blocks.set(m,data);return data;
+  }
+  wl=function(b,m,x,y){
+    if(m&&m===G.map&&wall(m,x,y)){
+      const d=setup(m),now=performance.now(),tx=Math.floor(x/d.tile),ty=Math.floor(y/d.tile),bx=tx&~1,by=ty&~1;
+      const block=d.map.get(bx+','+by);
+      if(block&&now-block.last>180){
+        block.last=now;block.hp--;
+        if(block.hp<=0){
+          for(let yy=block.y;yy<block.y+2;yy++)for(let xx=block.x;xx<block.x+2;xx++)if(m.w[yy])m.w[yy][xx]=false;
+          d.map.delete(bx+','+by);m.bg=null;m.__gvDecalCanvas=null;if(G)G.mmMap=null;
+          if(typeof spark==='function')spark((bx+1)*d.tile,(by+1)*d.tile,'#d9c3a0');
+        }else if(typeof spark==='function')spark(x,y,'#d5c4a2');
+      }
+    }
+    return baseWl(b,m,x,y);
+  };
+  if(typeof render1==='function'){
+    const baseRender1=render1;
+    render1=function(){
+      baseRender1();const m=G&&G.map,d=m&&setup(m);if(!d||typeof cx==='undefined')return;
+      cx.save();cx.lineCap='round';
+      for(const b of d.map.values()){
+        const x=(b.x+1)*d.tile,y=(b.y+1)*d.tile;
+        cx.strokeStyle='rgba(55,30,22,.82)';cx.lineWidth=1.05;cx.beginPath();
+        cx.moveTo(x-4,y-5);cx.lineTo(x-1,y-1);cx.lineTo(x-3,y+2);
+        cx.moveTo(x-1,y-1);cx.lineTo(x+3,y-3);cx.lineTo(x+2,y+1);cx.lineTo(x+4,y+4);cx.stroke();
+        if(b.hp<b.max){cx.strokeStyle='rgba(255,225,170,.9)';cx.lineWidth=.8;cx.beginPath();cx.moveTo(x-4,y-5);cx.lineTo(x-1,y-1);cx.lineTo(x-3,y+2);cx.stroke();}
+      }
+      cx.restore();
+    };
+  }
+})();
+</script>
 </body>
 </html>
