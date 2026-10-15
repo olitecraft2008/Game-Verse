@@ -957,7 +957,7 @@ const EXTRA_SHOT_COLORS=['#81d4fa','#9ccc65','#64b5f6','#ffb74d','#ce93d8','#f48
 EXTRA_SHOT_NAMES.forEach((n,i)=>{const q=Math.floor(i/5),k=[1,1,2,1,2][i%5];TK.push({n,q,bs:3.05+q*.11+(i%5)*.09,b:2+Math.min(2,Math.floor(q/2)),r:1.7+q*.13+(i%3)*.08,cd:680+q*28+(i%5)*22,k,sp:[0,.035,.075,.045,.09][i%5],c:EXTRA_SHOT_COLORS[i]})});
 const FX='0926002406916040192984465392157531346457'+'1645583417';TK.forEach((t,i)=>t.fx=i);
 const SH='1716501816'+'9309102715'+'5930627129'+'4681430656'+'2098856868'+'8',SH_BASE=['Cuadrada','Redonda','Rombo','Cruz','Equis','Triángulo','Anillo','Barra','Estrella','Puntos'],SHN=[...SH_BASE,...Array.from({length:81},(_,i)=>SH_BASE[i%10]+' '+['Mk.II','Mk.III','Mk.IV','Mk.V','Mk.VI','Mk.VII','Mk.VIII','Mk.IX','Mk.X'][Math.floor(i/10)])],cnt={};
-TK.forEach((t,i)=>{t.sh=i;t.md=i%8;if(t.md===2)t.bs*=1.25;if(t.md===3)t.b+=2;if(t.md===4)t.r+=1;if(t.md===6)t.cd=Math.round(t.cd*.75);if(t.md===7){t.k+=1;t.sp=t.sp||.14}});
+TK.forEach((t,i)=>{t.sh=i;t.md=i%8;if(t.md===2)t.bs*=1.15;if(t.md===3)t.b+=1;if(t.md===4)t.r+=.6;if(t.md===6)t.cd=Math.round(t.cd*.84);if(t.md===7){t.k+=1;t.sp=t.sp||.14}});
 const SKIN_NAMES=['Camuflaje del bosque','Desierto táctico','Acero nocturno','Rayas de tigre','Nebulosa','Caramelo ácido','Circuito cian','Lava antigua','Hielo fractal','Oro pulido','Píxel clásico','Mármol rosa','Bosque espectral','Víbora','Óxido industrial','Aurora polar','Escamas dragón','Noche estrellada','Cromo azul','Cromo rojo','Ceniza volcánica','Menta helada','Sakura','Tormenta eléctrica','Arena lunar','Camuflaje ártico','Reactor nuclear','Damasco','Ónice brillante','Galaxia profunda','Rosa neón','Cobre antiguo','Jade imperial','Runa azul','Prisma solar','Grieta abisal','Tinta cósmica','Fuego fatuo','Camuflaje digital','Tinta dorada','Rayo ultravioleta','Coral marino','Piel de serpiente','Cristal glacial','Volcán activo','Luz fantasma','Neblina lila','Eclipse solar','Estrella fugaz','Metal líquido','Pétalos rojos','Bosque encantado','Mosaico real','Cobalto','Marfil antiguo','Espectro RGB','Rey del hielo','Sombra abisal','Cometa carmesí','Singularidad'];
 const EXPLOSION_NAMES=['Chispa básica','Anillo escarlata','Nube tóxica','Estallido ártico','Lluvia de cobre','Anillo doble','Ráfaga de jade','Pulso violeta','Flor de fuego','Estrella marina','Trueno azul','Cráter dorado','Tormenta de ceniza','Corona cian','Rosa explosiva','Onda sísmica','Espiral ígnea','Destello espectral','Cometa roto','Lluvia de chispas','Supernova verde','Tornado carmesí','Anillos solares','Nebulosa púrpura','Fragmentos de hielo','Pulso sónico','Luz de plasma','Flor cósmica','Danza de meteoros','Relámpago blanco','Ruptura dimensional','Pétalos de fuego','Fulgor de jade','Eclipse naranja','Vórtice azul','Corazón de magma','Polvo estelar','Estallido prismático','Llama fantasmal','Corona eléctrica','Lluvia lunar','Onda de choque','Anillo de ónice','Explosión aurora','Rayo de rubí','Estrella polar','Ciclón dorado','Portal abisal','Loto de plasma','Esporas brillantes','Cascada ígnea','Núcleo helado','Resplandor real','Órbita radiante','Vacío carmesí','Constelación','Fractura celeste','Fénix ascendente','Big Bang miniatura','Última galaxia'];
 function hueHex(h,s,l){h=((h%360)+360)%360/360;let r,g,b;if(s===0)r=g=b=l;else{const q=l<.5?l*(1+s):l+s-l*s,p0=2*l-q;const f=t=>{if(t<0)t+=1;if(t>1)t-=1;if(t<1/6)return p0+(q-p0)*6*t;if(t<1/2)return q;if(t<2/3)return p0+(q-p0)*(2/3-t)*6;return p0};r=f(h+1/3);g=f(h);b=f(h-1/3)}return '#'+[r,g,b].map(v=>Math.round(v*255).toString(16).padStart(2,'0')).join('')}
@@ -1268,17 +1268,17 @@ function tg(b){if(!b.own)return G.alive&&!hiddenByBush(G.map,G,{x:b.x,y:b.y})?{x
 function wl(b,m,x,y){if(!wall(m,x,y))return false;if(((b.fx===7&&b.age<35)||(b.gh&&b.age<b.gh))&&x>8&&y>8&&x<N*T-8&&y<N*T-8)return false;spark(x,y,b.c);return true}
 function fxb(b,f){
 const e=b.fx;if(b.md===1&&b.age%3<f)spark(b.x,b.y,b.c);
-if(b.pb!==b.b){b.pb=b.b;if(b.md===5){b.vx*=.7;b.vy*=.7}if(e===2){b.vx*=1.2;b.vy*=1.2}if(e===3&&!b.ch){const a=Math.atan2(b.vy,b.vx),v=Math.hypot(b.vx,b.vy);[-.5,.5].forEach(d=>G.bl.push({...b,vx:Math.cos(a+d)*v,vy:Math.sin(a+d)*v,ch:1,b:1,pb:1,age:25}))}}
+if(b.pb!==b.b){b.pb=b.b;if(b.md===5){b.vx*=.76;b.vy*=.76}if(e===2){b.vx*=1.07;b.vy*=1.07}if(e===3&&!b.ch){const a=Math.atan2(b.vy,b.vx),v=Math.hypot(b.vx,b.vy)*.86;[-.5,.5].forEach(d=>G.bl.push({...b,vx:Math.cos(a+d)*v,vy:Math.sin(a+d)*v,ch:1,b:1,pb:1,age:25,r:Math.max(1.2,b.r*.82)}))}}
 const v=Math.hypot(b.vx,b.vy),a=Math.atan2(b.vy,b.vx);let na=a;
 /* La habilidad Disparo dirigido corrige suavemente la trayectoria hacia el rival. */
-if(e===1){const target=tg(b);if(target){const want=Math.atan2(target.y-b.y,target.x-b.x),delta=Math.atan2(Math.sin(want-a),Math.cos(want-a));na=a+Math.max(-.035*f,Math.min(.035*f,delta));}}
-if(e===4)na=a+Math.sin(b.age*.3)*.09*f;
+if(e===1){const target=tg(b);if(target){const want=Math.atan2(target.y-b.y,target.x-b.x),delta=Math.atan2(Math.sin(want-a),Math.cos(want-a));na=a+Math.max(-.019*f,Math.min(.019*f,delta));}}
+if(e===4)na=a+Math.sin(b.age*.3)*.065*f;
 if(na!==a){b.vx=Math.cos(na)*v;b.vy=Math.sin(na)*v}
-if(e===6)b.r=Math.min((b.r0||2)*2.4,b.r+.014*f);
+if(e===6)b.r=Math.min((b.r0||2)*1.5,b.r+.006*f);
 if(e===8&&b.age>70&&!b.rv){b.rv=1;b.vx=-b.vx;b.vy=-b.vy}
-if(e===9){b.s0=b.s0||v;if(v<b.s0*2.2){b.vx*=1+.012*f;b.vy*=1+.012*f}}
+if(e===9){b.s0=b.s0||v;if(v<b.s0*1.5){b.vx*=1+.005*f;b.vy*=1+.005*f}}
 if(e>9)fxn(b,f,v,a)}
-function fxEnd(b){const nx=b.fx>9?NX[b.fx-10]:null;if(nx&&nx[0]===4&&!b.ch){const n=Math.max(2,Math.min(3,Math.round(nx[1]))),sp=Math.max(1.6,Math.min(3.2,nx[2]));for(let i=0;i<n;i++){const a=i*Math.PI*2/n;G.bl.push({...b,vx:Math.cos(a)*sp,vy:Math.sin(a)*sp,b:1,pb:1,age:40,ch:1,fx:0,r:Math.max(1.5,b.r*.6)})}}if((b.fx===5||b.fx===11)&&!b.ch){const n=b.fx===5?6:5,sp=b.fx===5?2.6:2.25;spark(b.x,b.y,b.c);for(let i=0;i<n;i++){const a=i*Math.PI*2/n;G.bl.push({...b,vx:Math.cos(a)*sp,vy:Math.sin(a)*sp,b:1,pb:1,age:40,ch:1,fx:0,r:Math.max(1.5,b.r*.55),sh:(b.sh+8)%SHN.length})}}}
+function fxEnd(b){const nx=b.fx>9?NX[b.fx-10]:null;if(nx&&nx[0]===4&&!b.ch){const n=2,sp=Math.max(1.4,Math.min(2.6,nx[2]*.82));for(let i=0;i<n;i++){const a=i*Math.PI*2/n;G.bl.push({...b,vx:Math.cos(a)*sp,vy:Math.sin(a)*sp,b:1,pb:1,age:40,ch:1,fx:0,r:Math.max(1.3,b.r*.52)})}}if((b.fx===5||b.fx===11)&&!b.ch){const n=4,sp=b.fx===5?2.1:1.9;spark(b.x,b.y,b.c);for(let i=0;i<n;i++){const a=i*Math.PI*2/n;G.bl.push({...b,vx:Math.cos(a)*sp,vy:Math.sin(a)*sp,b:1,pb:1,age:40,ch:1,fx:0,r:Math.max(1.2,b.r*.48),sh:(b.sh+8)%SHN.length})}}}
 /* ===== Gráficos realistas ===== */
 const _pc=new Map();
 function pc(c){let v=_pc.get(c);if(v)return v;const m=/^#?([0-9a-f]{3}|[0-9a-f]{6})$/i.exec(c||'');if(!m)v=[160,160,160];else{let h=m[1];if(h.length===3)h=h.split('').map(x=>x+x).join('');v=[parseInt(h.slice(0,2),16),parseInt(h.slice(2,4),16),parseInt(h.slice(4,6),16)]}_pc.set(c,v);return v}
@@ -1539,26 +1539,26 @@ function fxn(b,f,v,a){
 const [k,p,q]=NX[b.fx-10];b.s0=b.s0||v;
 if(b.pn===undefined)b.pn=b.b;const bn=b.pn!==b.b;b.pn=b.b;
 let na=a;
-if(k===0)na=a+Math.sin(b.age*q)*p*f;
+if(k===0)na=a+Math.sin(b.age*q)*p*.8*f;
 else if(k===1){ /* Sin balas perseguidoras: no modifica el ángulo hacia el rival. */ }
-else if(k===2){if(v<b.s0*q){b.vx*=1+p*f;b.vy*=1+p*f}}
-else if(k===3){if(bn&&!b.ch)for(let i=0;i<p;i++){const d=(i-(p-1)/2)*q;G.bl.push({...b,vx:Math.cos(a+d)*v,vy:Math.sin(a+d)*v,ch:1,b:1,pb:1,pn:1,age:25})}}
-else if(k===5)b.r=Math.min((b.r0||2)*q,b.r+p*f);
+else if(k===2){if(v<b.s0*q){b.vx*=1+p*.7*f;b.vy*=1+p*.7*f}}
+else if(k===3){if(bn&&!b.ch)for(let i=0;i<Math.min(2,p);i++){const count=Math.min(2,p),d=(i-(count-1)/2)*q;G.bl.push({...b,vx:Math.cos(a+d)*v*.86,vy:Math.sin(a+d)*v*.86,ch:1,b:1,pb:1,pn:1,age:25,r:Math.max(1.2,b.r*.82)})}}
+else if(k===5)b.r=Math.min((b.r0||2)*Math.min(1.45,q),b.r+p*.7*f);
 else if(k===6){if(b.age>p&&!b.rv){b.rv=1;b.vx=-b.vx;b.vy=-b.vy}}
 else if(k===7)b.gh=p;
-else if(k===8)na=a+p*q*f;
-else if(k===9){if(v>b.s0*p){b.vx*=1-q*f;b.vy*=1-q*f}}
-else if(k===10){if(Math.floor(b.age)%q<f)na=a+(Math.random()-.5)*p}
-else if(k===11){if(b.age>p&&!b.ch&&!b.ts){b.ts=1;for(let i=0;i<q;i++){const d=(i-(q-1)/2)*.4;G.bl.push({...b,vx:Math.cos(a+d)*v,vy:Math.sin(a+d)*v,ch:1,b:1,pb:1,pn:1,age:b.age})}}}
-else if(k===12){const s=b.s0*(1+p*Math.sin(b.age*q))/(v||1);b.vx*=s;b.vy*=s}
+else if(k===8)na=a+p*q*.75*f;
+else if(k===9){if(v>b.s0*p){b.vx*=1-q*.75*f;b.vy*=1-q*.75*f}}
+else if(k===10){if(Math.floor(b.age)%q<f)na=a+(Math.random()-.5)*p*.75}
+else if(k===11){if(b.age>p&&!b.ch&&!b.ts){b.ts=1;const count=Math.max(1,Math.min(2,q));for(let i=0;i<count;i++){const d=(i-(count-1)/2)*.4;G.bl.push({...b,vx:Math.cos(a+d)*v*.86,vy:Math.sin(a+d)*v*.86,ch:1,b:1,pb:1,pn:1,age:b.age,r:Math.max(1.2,b.r*.82)})}}}
+else if(k===12){const s=b.s0*(1+p*.7*Math.sin(b.age*q))/(v||1);b.vx*=s;b.vy*=s}
 if(b.fx>=51){
  const nm=(FXN[b.fx]||'').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'');
- if(/arco electrico|rayo fantasma|disparo dirigido|pulso de plasma/.test(nm)){const target=tg(b);if(target){const want=Math.atan2(target.y-b.y,target.x-b.x),dd=Math.atan2(Math.sin(want-a),Math.cos(want-a));na=a+Math.max(-.025*f,Math.min(.025*f,dd));}}
- if(/zigzag|caos|erratic|finta|vibracion|curva|deriva|giro|espiral|orbita|danza|ciclon|tornado|pulso ondulante/.test(nm))na=a+Math.sin(b.age*.16+(b.sh||0))*.045*f;
- if(/aceler|impulso|veloz|relampago|punta|dinamo|centella|rayo/.test(nm)&&v<b.s0*1.5){b.vx*=1+.003*f;b.vy*=1+.003*f;}
- if(/crece|gota gorda|titan|colosal|onda grande|pulso de plasma/.test(nm))b.r=Math.min((b.r0||2)*1.8,b.r+.004*f);
- if(/fantasma|espectral|fase|vacio|eclipse/.test(nm))b.gh=Math.max(b.gh||0,60);
- if(/explos|semilla|supernova|apocalipsis|fragmento|meteoro|racimo|llovizna|rafaga|dispersa|metralla|se abre|pulso de jade/.test(nm)&&b.age>38&&!b.namedSplit&&!b.ch){b.namedSplit=1;const count=2,speed=Math.max(1.7,Math.min(2.8,v*.72));for(let i=0;i<count;i++){const ang=a+(i?1:-1)*(.22+(b.sh%4)*.045);G.bl.push({...b,vx:Math.cos(ang)*speed,vy:Math.sin(ang)*speed,b:1,pb:1,pn:1,age:b.age,ch:1,fx:0,r:Math.max(1.3,b.r*.62),sh:(b.sh+13+i)%SHN.length});}}
+ if(/arco electrico|rayo fantasma|disparo dirigido|pulso de plasma/.test(nm)){const target=tg(b);if(target){const want=Math.atan2(target.y-b.y,target.x-b.x),dd=Math.atan2(Math.sin(want-a),Math.cos(want-a));na=a+Math.max(-.013*f,Math.min(.013*f,dd));}}
+ if(/zigzag|caos|erratic|finta|vibracion|curva|deriva|giro|espiral|orbita|danza|ciclon|tornado|pulso ondulante/.test(nm))na=a+Math.sin(b.age*.16+(b.sh||0))*.025*f;
+ if(/aceler|impulso|veloz|relampago|punta|dinamo|centella|rayo/.test(nm)&&v<b.s0*1.35){b.vx*=1+.0015*f;b.vy*=1+.0015*f;}
+ if(/crece|gota gorda|titan|colosal|onda grande|pulso de plasma/.test(nm))b.r=Math.min((b.r0||2)*1.35,b.r+.002*f);
+ if(/fantasma|espectral|fase|vacio|eclipse/.test(nm))b.gh=Math.max(b.gh||0,45);
+ if(/explos|semilla|supernova|apocalipsis|fragmento|meteoro|racimo|llovizna|rafaga|dispersa|metralla|se abre|pulso de jade/.test(nm)&&b.age>38&&!b.namedSplit&&!b.ch){b.namedSplit=1;const count=2,speed=Math.max(1.5,Math.min(2.3,v*.55));for(let i=0;i<count;i++){const ang=a+(i?1:-1)*(.22+(b.sh%4)*.045);G.bl.push({...b,vx:Math.cos(ang)*speed,vy:Math.sin(ang)*speed,b:1,pb:1,pn:1,age:b.age,ch:1,fx:0,r:Math.max(1.2,b.r*.52),sh:(b.sh+13+i)%SHN.length});}}
  if(/bumeran|vuelve|retorno|eco/.test(nm)&&b.age>48&&!b.namedReturn){b.namedReturn=1;b.vx=-b.vx;b.vy=-b.vy;}
  if(/rastro|eco|chisp|solar|aurora|coral|jade|cian|violeta|glacial|lunar/.test(nm)&&b.age%7<f)spark(b.x,b.y,b.c);
 }
@@ -2499,7 +2499,7 @@ addEventListener('resize',()=>{const playing=!$('#game').hidden;const mobile=win
 let BOT=null;
 function startBot(l){if(g)return;const tk=l===4?2:50;BOT={lvl:l,tk,last:0,tx:0,ty:0,nt:0,px:0,py:0,vx:0,vy:0,aimAt:0,aimResult:null,p:{x:0,y:0,ta:0,ba:0,tk,dr:0,sh:null,name:l===4?'Imposible':'Bot '+LV[l]}};g={isHost:true,max:2,me:{id:'h',slot:0},presence(){},leave(){},onChange(){return()=>{}},onClose(){},setOpen(){},players(){return[{id:'h',slot:0,isMe:true,presence:{}},{id:'bot',slot:1,isMe:false,presence:BOT.p}]}};gOff=null;screen('game');$('#ov').innerHTML='';G=newG({bot:1,lvl:l,code:'bot',st:'play',started:true,host:true,slot:0,mn:1});hostRound({})}
 document.querySelectorAll('[data-l]').forEach(b=>b.onclick=()=>startBot(+b.dataset.l));
-function botReset(o){const B=BOT,p=B.p;p.x=o.x;p.y=o.y;p.ta=Math.atan2(G.y-o.y,G.x-o.x);B.px=G.x;B.py=G.y;B.seenX=G.x;B.seenY=G.y;B.vx=B.vy=0;B.nt=0;B.aimAt=0;B.aimResult=null;B.aimGX=G.x;B.aimGY=G.y;B.am=ammoCapacity(TK[p.tk]||TK[0]);B.rt=performance.now();B.last=performance.now()+[1000,600,250,0,0][B.lvl];B.learn=B.learn||{dirBins:Array(8).fill(0),moveX:0,moveY:0,moves:0,avgSpeed:0,orbit:0,aggression:0,shots:0,lastShotN:G.shN||0,lastShotAt:0,fireInterval:900};B.learn.lastShotN=G.shN||0;B.learn.lastShotAt=performance.now();}
+function botReset(o){const B=BOT,p=B.p;p.x=o.x;p.y=o.y;p.ta=Math.atan2(G.y-o.y,G.x-o.x);B.px=G.x;B.py=G.y;B.seenX=G.x;B.seenY=G.y;B.vx=B.vy=0;B.nt=0;B.aimAt=0;B.aimResult=null;B.aimGX=G.x;B.aimGY=G.y;B.am=ammoCapacity(TK[p.tk]||TK[0]);B.rt=performance.now();B.last=performance.now()+[1000,600,250,0,0][B.lvl];B.learn=B.learn||{dirBins:Array(8).fill(0),moveX:0,moveY:0,moves:0,avgSpeed:0,orbit:0,aggression:0,shots:0,lastShotN:G.shN||0,lastShotAt:0,fireInterval:900};B.learn.lastShotN=G.shN||0;B.learn.lastShotAt=performance.now();B.decAt=0;B.dirX=B.dirY=0;B.dirI=-2;B.escUntil=0;B.stkAt=0;B.stkX=p.x;B.stkY=p.y;B.stkWant=0;B.seenAt=performance.now();B.hidShots=0;B.sFlip=0;B.still=0;B.wpRetreat=null;B.fullAt=0;}
 function learnBotFromPlayer(B,now){
  const L=B.learn||(B.learn={dirBins:Array(8).fill(0),moveX:0,moveY:0,moves:0,avgSpeed:0,orbit:0,aggression:0,shots:0,lastShotN:G.shN||0,lastShotAt:now,fireInterval:900});
  const dx=G.x-(B.px??G.x),dy=G.y-(B.py??G.y),speed=Math.hypot(dx,dy);
@@ -2529,38 +2529,154 @@ function botLearnedTarget(B,x,y,dist){
  const lead=conf*Math.min(42,10+dist*.085)*(0.85+Math.min(.3,L.avgSpeed*.15));
  return{x:x+px*lead,y:y+py*lead,confidence:conf,aggression:L.aggression,orbit:L.orbit};
 }
+/* ===== IA de bots v2 (todos los niveles) =====
+   - Esquiva predictiva: simula las balas con rebotes (también las del propio bot) y elige entre 17 movimientos el más seguro.
+   - Lee hacia dónde apunta el jugador (línea de tiro con rebotes) y se aparta antes de que dispare.
+   - Puntería: busca ángulos con rebotes, anticipa al jugador (velocidad + hábitos aprendidos) y evita autoimpactos.
+   - Táctica: cobertura al quedarse sin munición, arbustos como emboscada, detección de "campers" y de presión, anti-atasco. */
+const BCFG=[
+ {sp:.96,turn:.11,ideal:118,nd:200,dw:.8,bd:0,bc:0,aimLine:0,ang:.08,ar:300,fr:34,maxT:240,tol:.13,ef:1.9,noise:.16,rl:.775,rlMin:900,cd:1.05,cdMin:100,mem:0,look:20,depth:10,expo:.4,ss:.12,wp:460,first:1000},
+ {sp:1.28,turn:.20,ideal:134,nd:130,dw:1.0,bd:1,bc:1,aimLine:0,ang:.06,ar:220,fr:46,maxT:320,tol:.09,ef:1.45,noise:.09,rl:.65,rlMin:900,cd:.675,cdMin:100,mem:0,look:24,depth:12,expo:.7,ss:.22,wp:380,first:600},
+ {sp:1.58,turn:.38,ideal:162,nd:70,dw:1.25,bd:1,bc:3,aimLine:1,ang:.05,ar:170,fr:60,maxT:420,tol:.058,ef:1.15,noise:.04,rl:.54,rlMin:900,cd:.475,cdMin:100,mem:1100,look:28,depth:14,expo:1,ss:.32,wp:320,first:250},
+ {sp:1.96,turn:.68,ideal:188,nd:30,dw:1.5,bd:1,bc:8,aimLine:1,ang:.04,ar:130,fr:80,maxT:520,tol:.0375,ef:1,noise:.009,rl:.475,rlMin:900,cd:.36,cdMin:100,mem:1500,look:30,depth:15,expo:1.3,ss:.4,wp:280,first:0},
+ {sp:2.32,turn:.92,ideal:188,nd:0,dw:1.75,bd:1,bc:99,aimLine:1,ang:.04,ar:110,fr:80,maxT:560,tol:.0475,ef:.9,noise:0,rl:.39,rlMin:725,cd:.33,cdMin:105,mem:1800,look:32,depth:16,expo:1.5,ss:.45,wp:300,first:0}
+];
+const BDIR=Array.from({length:16},(_,i)=>[Math.cos(i*Math.PI/8),Math.sin(i*Math.PI/8)]);
+const botAdiff=(a,b)=>{const d=a-b;return Math.atan2(Math.sin(d),Math.cos(d))};
+function botSegD(px,py,ax,ay,bx,by){const dx=bx-ax,dy=by-ay,l=dx*dx+dy*dy;let t=l>1e-6?((px-ax)*dx+(py-ay)*dy)/l:0;t=t<0?0:t>1?1:t;const cx=ax+dx*t-px,cy=ay+dy*t-py;return Math.sqrt(cx*cx+cy*cy)}
 function clear(x1,y1,x2,y2){const n=Math.ceil(Math.hypot(x2-x1,y2-y1)/4);for(let i=1;i<n;i++){if(wall(G.map,x1+(x2-x1)*i/n,y1+(y2-y1)*i/n))return false}return true}
-function botSmartWaypoint(m,p,gx,gy,L){
+
+/* Trayectoria de una bala con la misma física que step(): muestras cada ts frames. cap=0 → se detiene en el primer muro. */
+function botTraj(b0,H,ts,cap){
+ const m=G.map;let x=b0.x,y=b0.y,vx=b0.vx,vy=b0.vy,bl=b0.b,age=b0.age||0;
+ const fx=b0.fx,md=b0.md,gl=b0.gh||0,pts=[x,y];
+ for(let fr=1;fr<=H;fr++){
+  const sp=Math.hypot(vx,vy),n=Math.max(1,Math.ceil(sp/3)),k=1/n;let dead=false;
+  for(let s=0;s<n&&!dead;s++){
+   let nx=x+vx*k;
+   if(wall(m,nx,y)&&!(((fx===7&&age<35)||(gl&&age<gl))&&nx>8&&y>8&&nx<N*T-8&&y<N*T-8)){
+    if(!cap){dead=true;break}vx=-vx;bl--;if(bl<0){dead=true;break}if(md===5){vx*=.7;vy*=.7}if(fx===2){vx*=1.2;vy*=1.2}
+   }else x=nx;
+   let ny=y+vy*k;
+   if(wall(m,x,ny)&&!(((fx===7&&age<35)||(gl&&age<gl))&&x>8&&ny>8&&x<N*T-8&&ny<N*T-8)){
+    if(!cap){dead=true;break}vy=-vy;bl--;if(bl<0){dead=true;break}if(md===5){vx*=.7;vy*=.7}if(fx===2){vx*=1.2;vy*=1.2}
+   }else y=ny;
+  }
+  if(dead)break;age++;
+  if(fr%ts===0)pts.push(x,y);
+ }
+ return pts;
+}
+/* Amenazas: balas del jugador + balas del propio bot (solo dañan tras 25 frames) + línea de tiro del jugador. */
+function botBuildThreats(p,C,now){
+ const th=[],H=C.look,ts=2;
+ for(const b of G.bl){
+  const sp=Math.hypot(b.vx,b.vy);if(sp<.05)continue;
+  if(Math.hypot(b.x-p.x,b.y-p.y)-40>sp*H)continue;
+  const mine=!b.own,homing=b.fx===1;
+  th.push({pts:botTraj(b,H,ts,C.bd),R:5+b.r+9+(homing?5:0),w:(mine?.8:1)*(homing?1.25:1),skip:mine?Math.max(1,Math.ceil((25-b.age)/ts)):1});
+  if(th.length>26)break;
+ }
+ if(C.aimLine&&G.alive&&G.am>0&&!G.rl){
+  const st=TK[sv.sel]||TK[0],a=G.ta,fire=(typeof firing!=='undefined'&&firing)||(mobileInput&&mobileInput.aimShotUntil>now);
+  const pb={x:G.x+Math.cos(a)*9,y:G.y+Math.sin(a)*9,vx:Math.cos(a)*8,vy:Math.sin(a)*8,b:st.b,r:st.r,age:30,fx:st.fx===7?7:0,md:0};
+  th.push({pts:botTraj(pb,H,ts,C.bd),R:5+st.r+8,w:fire?.95:.5,skip:1});
+ }
+ return th;
+}
+function botPathDanger(th,xs,ys,S){
+ let D=0;
+ for(const t of th){const P=t.pts,n=(P.length>>1)-1,lim=Math.min(S,n);
+  for(let i=Math.max(1,t.skip);i<=lim;i++){
+   const d=botSegD(xs[i],ys[i],P[2*i-2],P[2*i-1],P[2*i],P[2*i+1]);
+   if(d<t.R){const q=1-d/t.R;D+=q*q*(1.35-i/(S*1.25))*t.w}
+  }}
+ return D;
+}
+function botCandPath(p,m,spd,S,ts,ux,uy,xs,ys){
+ let x=p.x,y=p.y,wallAt=-1;xs[0]=x;ys[0]=y;const sx=ux*spd*ts*.5,sy=uy*spd*ts*.5;
+ for(let i=1;i<=S;i++){
+  for(let h=0;h<2;h++){
+   if(!blocked(m,x+sx,y))x+=sx;else if(wallAt<0)wallAt=i;
+   if(!blocked(m,x,y+sy))y+=sy;else if(wallAt<0)wallAt=i;
+  }
+  xs[i]=x;ys[i]=y;
+ }
+ return wallAt;
+}
+/* Elige el mejor punto de la zona alcanzable: ángulo de tiro, distancia ideal, cobertura, arbustos y peligro. */
+function losFast(x1,y1,x2,y2){const n=Math.ceil(Math.hypot(x2-x1,y2-y1)/7);for(let i=1;i<n;i++){if(wall(G.map,x1+(x2-x1)*i/n,y1+(y2-y1)*i/n))return false}return true}
+function botWaypoint(m,p,gx,gy,C,th,retreat,pressure,camp){
  const sx=Math.max(1,Math.min(N-2,Math.floor(p.x/T))),sy=Math.max(1,Math.min(N-2,Math.floor(p.y/T)));
  const idx=(x,y)=>y*N+x,pxOf=x=>(x+.5)*T,pyOf=y=>(y+.5)*T;
  const open=(x,y)=>x>0&&y>0&&x<N-1&&y<N-1&&!blocked(m,pxOf(x),pyOf(y));
- const parent=new Int16Array(N*N);parent.fill(-2);const q=[{x:sx,y:sy}];parent[idx(sx,sy)]=-1;
+ const parent=new Int16Array(N*N).fill(-2),dep=new Uint8Array(N*N),q=[{x:sx,y:sy}];parent[idx(sx,sy)]=-1;
  const dirs=[[1,0],[-1,0],[0,1],[0,-1]];
- for(let i=0;i<q.length;i++){const at=q[i];for(const [dx,dy] of dirs){const x=at.x+dx,y=at.y+dy,k=idx(x,y);if(parent[k]!==-2||!open(x,y))continue;parent[k]=idx(at.x,at.y);q.push({x,y})}}
- const ideal=[118,134,162,188][L],bullets=G.bl.filter(b=>b.own);let best=null,bestScore=-1e9;
- for(const n of q){const wx=pxOf(n.x),wy=pyOf(n.y),d=Math.hypot(gx-wx,gy-wy);if(d<T*2.2)continue;
-   const los=clear(m,wx,wy,gx,gy);let danger=0;
-   for(const b of bullets){const vx=b.vx,vy=b.vy,vv=vx*vx+vy*vy;if(vv<.01)continue;const tau=Math.max(0,Math.min(20,((wx-b.x)*vx+(wy-b.y)*vy)/vv));const dd=Math.hypot(wx-(b.x+vx*tau),wy-(b.y+vy*tau));if(tau>0&&dd<34)danger+=(34-dd)*(1-tau/25)}
-   // Prefer cover and angles with a shot, but don't camp right beside the player.
-   let cover=0;for(const [dx,dy] of dirs)if(wall(m,wx+dx*T*.75,wy+dy*T*.75))cover+=.7;
-   const pathLen=(()=>{let len=0,k=idx(n.x,n.y),guard=0;while(parent[k]>=0&&guard++<N*N){len++;k=parent[k]}return len})();
-   const score=-Math.abs(d-ideal)*.42+(los?30:0)+cover*1.05-danger*1.9-pathLen*.24+Math.random()*1.6;
-   if(score>bestScore){bestScore=score;best={x:n.x,y:n.y,k:idx(n.x,n.y),pathLen}}
+ for(let i=0;i<q.length;i++){const at=q[i],dd=dep[idx(at.x,at.y)];if(dd>=C.depth)continue;
+  for(const [dx,dy] of dirs){const x=at.x+dx,y=at.y+dy,k=idx(x,y);if(parent[k]!==-2||!open(x,y))continue;parent[k]=idx(at.x,at.y);dep[k]=dd+1;q.push({x,y})}}
+ const ideal=C.ideal*(1+.22*pressure-.18*camp),smart=C.aimLine;
+ for(const t of th){let x0=1e9,y0=1e9,x1=-1e9,y1=-1e9;const P=t.pts,lim=t.R+10;for(let i=0;i<P.length;i+=2){if(P[i]<x0)x0=P[i];if(P[i]>x1)x1=P[i];if(P[i+1]<y0)y0=P[i+1];if(P[i+1]>y1)y1=P[i+1]}t.x0=x0-lim;t.x1=x1+lim;t.y0=y0-lim;t.y1=y1+lim}
+ let best=null,bestScore=-1e9;
+ for(const n of q){
+  const wx=pxOf(n.x),wy=pyOf(n.y),d=Math.hypot(gx-wx,gy-wy);if(d<T*2.2||d>ideal+190)continue;
+  const k=idx(n.x,n.y),depth=dep[k],los=losFast(wx,wy,gx,gy);let danger=0;
+  for(const t of th){if(wx<t.x0||wx>t.x1||wy<t.y0||wy>t.y1)continue;const P=t.pts,cnt=(P.length>>1)-1,lim=t.R+10;
+   for(let i=Math.max(1,t.skip);i<=cnt;i++){const dd=botSegD(wx,wy,P[2*i-2],P[2*i-1],P[2*i],P[2*i+1]);if(dd<lim)danger+=(1-dd/lim)*t.w*(1-i/(cnt+2)*.5)}}
+  let cover=0;for(const [dx,dy] of dirs)if(wall(m,wx+dx*T*.75,wy+dy*T*.75))cover+=.7;
+  let s=-Math.abs(d-ideal)*.42-danger*7-depth*.24+Math.random()*1.6;
+  if(retreat)s+=(los?-38:20)+cover*1.8;
+  else s+=(los?30:0)+cover*1.05;
+  if(smart&&!retreat&&d>34&&bushAt(m,wx,wy))s+=8;
+  if(s>bestScore){bestScore=s;best=k}
  }
- if(!best)return null;
- let k=best.k,path=[];while(k>=0&&path.length<N*N){path.push({x:k%N,y:(k/N)|0});k=parent[k]}
- path.reverse();const step=path.length>1?path[1]:path[0];return{x:pxOf(step.x),y:pyOf(step.y)};
+ if(best==null)return null;
+ const path=[];let k=best;while(k>=0&&path.length<N*N){path.push({x:k%N,y:(k/N)|0});k=parent[k]}
+ path.reverse();
+ let pick=path.length>1?path[1]:path[0];
+ for(let j=Math.min(3,path.length-1);j>1;j--){const c=path[j];if(clear(p.x,p.y,pxOf(c.x),pyOf(c.y))){pick=c;break}}
+ return{x:pxOf(pick.x),y:pyOf(pick.y)};
 }
-function botDodgeVector(p,m){
- let dx=0,dy=0,threat=0;
- for(const b of G.bl){if(!b.own)continue;const vx=b.vx,vy=b.vy,vv=vx*vx+vy*vy;if(vv<.01)continue;
-   const rx=p.x-b.x,ry=p.y-b.y,tau=(rx*vx+ry*vy)/vv;if(tau<-.3||tau>25)continue;
-   const cx=b.x+vx*tau,cy=b.y+vy*tau,ox=p.x-cx,oy=p.y-cy,dd=Math.hypot(ox,oy);if(dd>31)continue;
-   const w=(31-dd)/31*(1-tau/32);let nx=ox/(dd||1),ny=oy/(dd||1);
-   if(dd<5){const vl=Math.hypot(vx,vy)||1,n=(ox*vy-oy*vx)>=0?1:-1;nx=-vy/vl*n;ny=vx/vl*n}
-   dx+=nx*w;dy+=ny*w;threat+=w;
+/* Predicción del jugador: velocidad medida con decaimiento, sin atravesar muros, más un sesgo hacia sus hábitos. */
+function botPredict(B,m,gx,gy,n,lt,hid){
+ const px=new Float32Array(n+1),py=new Float32Array(n+1);
+ let x=gx,y=gy,vx=hid?0:B.vx,vy=hid?0:B.vy;const sp=Math.hypot(vx,vy);
+ if(sp>.95){vx*=.95/sp;vy*=.95/sp}if(sp<.12){vx=vy=0}
+ const hx=lt?(lt.x-gx)*.6:0,hy=lt?(lt.y-gy)*.6:0;
+ for(let i=0;i<=n;i++){
+  const w=Math.min(1,i/25);let ex=x+hx*w,ey=y+hy*w;if(blocked(m,ex,ey)){ex=x;ey=y}
+  px[i]=ex;py[i]=ey;
+  const nx=x+vx,ny=y+vy;if(!blocked(m,nx,y))x=nx;else vx=0;if(!blocked(m,x,ny))y=ny;else vy=0;vx*=.965;vy*=.965;
  }
- return{x:dx,y:dy,threat};
+ return{px,py};
+}
+/* Busca el ángulo de disparo con rebotes que intercepta la posición prevista. Usa los valores reales del bot (velocidad x2, rebotes x2). */
+function botFindShot(p,m,C,pred,dirA,narrow){
+ const st=TK[p.tk]||TK[2],speed=Math.max(1,(st.bs||3.2)*.98);
+ const maxB=Math.min(C.bc,Math.max(0,Math.round(st.b||0))),rad=Math.min(12,st.r||2),hitR=5+rad;
+ const gh=st.fx===7,acc=st.fx===2,slow=st.md===5,maxFr=Math.min(C.fr,pred.px.length-1),maxTravel=Math.min(C.maxT,speed*maxFr),stepD=speed>6?4:3.2;
+ const edge=(x,y)=>x>8&&y>8&&x<N*T-8&&y<N*T-8;
+ const sim=a=>{
+  let ux=Math.cos(a),uy=Math.sin(a),x=p.x+ux*9,y=p.y+uy*9,sp=speed,fr=0,bn=0,best=1e9,bFr=0,bB=0,self=false,tr=0;
+  while(tr<maxTravel){
+   const nx=x+ux*stepD;
+   if(wall(m,nx,y)&&!(gh&&fr<35&&edge(nx,y))){ux=-ux;if(++bn>maxB)break;if(acc)sp*=1.2;if(slow)sp*=.7}else x=nx;
+   const ny=y+uy*stepD;
+   if(wall(m,x,ny)&&!(gh&&fr<35&&edge(x,ny))){uy=-uy;if(++bn>maxB)break;if(acc)sp*=1.2;if(slow)sp*=.7}else y=ny;
+   tr+=stepD;fr+=stepD/sp;if(fr>maxFr)break;
+   const i=fr|0,err=Math.hypot(x-pred.px[i],y-pred.py[i]);
+   if(err<best){best=err;bFr=fr;bB=bn}
+   if(fr>25&&best>hitR&&Math.hypot(x-p.x,y-p.y)<hitR+3){self=true;break}
+   if(err<hitR*.35)break;
+  }
+  return{a,err:best,score:best+bB*.35+bFr*.015+(self?70:0),b:bB,self,hitR};
+ };
+ let best=null;
+ if(dirA!=null)best=sim(dirA);
+ if(narrow&&dirA!=null){for(let a=dirA-narrow;a<=dirA+narrow;a+=C.ang){const r=sim(a);if(!best||r.score<best.score)best=r}}
+ else for(let a=0;a<Math.PI*2;a+=C.ang){const r=sim(a);if(!best||r.score<best.score)best=r}
+ const base=best.a;
+ for(let k=-6;k<=6;k++){if(!k)continue;const r=sim(base+k*C.ang/6);if(r.score<best.score)best=r}
+ return best;
 }
 function randomStyleId(){const id=Math.random()*(TK.length-1)|0;return id>=50?id+1:id}
 function nextBotRoundStyle(previous){
@@ -2570,121 +2686,106 @@ function nextBotRoundStyle(previous){
  return next;
 }
 function botStep(f,now){
- const B=BOT,p=B.p,m=G.map,L=B.lvl;
- if(L===4){botImpossibleStep(f,now);return}
+ const B=BOT,p=B.p,m=G.map,L=Math.min(4,B.lvl|0),C=BCFG[L];
  if(!G.active||!G.alive||now<G.frz||p.dr===G.rn)return;
  const learned=learnBotFromPlayer(B,now);
- const targetHidden=hiddenByBush(m,G,p);
- if(!targetHidden){B.vx=B.vx*.72+(G.x-B.px)/Math.max(.5,f)*.28;B.vy=B.vy*.72+(G.y-B.py)/Math.max(.5,f)*.28;B.seenX=G.x;B.seenY=G.y}else{B.vx*=.55;B.vy*=.55}
- B.px=G.x;B.py=G.y;const gx=targetHidden?(B.seenX??G.x):G.x,gy=targetHidden?(B.seenY??G.y):G.y;
- const learnedTarget=targetHidden?{x:gx,y:gy,confidence:0,aggression:learned.aggression,orbit:learned.orbit}:botLearnedTarget(B,gx,gy,Math.hypot(gx-p.x,gy-p.y));
- const moveGX=learnedTarget.x,moveGY=learnedTarget.y;
- const dx0=moveGX-p.x,dy0=moveGY-p.y,dist=Math.hypot(dx0,dy0)||1;
- // Aprende direcciones y ritmo de disparo; anticipa hábitos además de la velocidad instantánea.
- const dodge=botDodgeVector(p,m),dodgeX=dodge.x,dodgeY=dodge.y,threat=dodge.threat;
- if(now>B.nt){
-   const waypoint=botSmartWaypoint(m,p,moveGX,moveGY,L);
-   if(waypoint){B.tx=waypoint.x;B.ty=waypoint.y}
-   else{
-     // Fallback: busca una celda caminable cercana, sin meterse en el muro.
-     const dirs=[[1,0],[-1,0],[0,1],[0,-1],[.707,.707],[.707,-.707],[-.707,.707],[-.707,-.707]];let best=null,bs=-1e9;
-     for(const [ax,ay] of dirs){const tx=p.x+ax*62,ty=p.y+ay*62;if(blocked(m,tx,ty)||!clear(m,p.x,p.y,tx,ty))continue;const d=Math.hypot(moveGX-tx,moveGY-ty),line=clear(m,tx,ty,moveGX,moveGY)?1:0;const score=-Math.abs(d-[118,134,162,188][L])*.4+line*25+(ax*dodgeX+ay*dodgeY)*30+Math.random()*2;if(score>bs){bs=score;best={x:tx,y:ty}}}if(best){B.tx=best.x;B.ty=best.y}else{B.tx=p.x;B.ty=p.y}
+ const hid=hiddenByBush(m,G,p);
+ const mvd=Math.hypot(G.x-(B.px==null?G.x:B.px),G.y-(B.py==null?G.y:B.py));
+ B.still=(B.still==null?0:B.still)*.985+(mvd<.2*f?1:0)*.015;
+ if(!hid){B.vx=B.vx*.72+(G.x-B.px)/Math.max(.5,f)*.28;B.vy=B.vy*.72+(G.y-B.py)/Math.max(.5,f)*.28;B.seenX=G.x;B.seenY=G.y;B.seenAt=now;B.hidShots=0}
+ else{B.vx*=.55;B.vy*=.55}
+ B.px=G.x;B.py=G.y;
+ const gx=hid?(B.seenX==null?G.x:B.seenX):G.x,gy=hid?(B.seenY==null?G.y:B.seenY):G.y;
+ const memOK=hid&&C.mem>0&&now-(B.seenAt||0)<C.mem&&(B.hidShots||0)<2,canTarget=!hid||memOK;
+ const dx0=gx-p.x,dy0=gy-p.y,dist=Math.hypot(dx0,dy0)||1;
+ const pressure=Math.min(1,learned.aggression),camp=Math.max(0,Math.min(1,((B.still||0)-.5)/.4));
+ const t=TK[p.tk]||TK[2],cap=ammoCapacity(t);
+ // Recarga progresiva
+ if(B.am<cap&&now-B.rt>=Math.max(C.rlMin,t.rl*C.rl)){B.am++;B.rt=now}
+ const retreat=B.am<=0||(L>=2&&B.am<=1&&cap>=3&&pressure>.45);
+ const th=botBuildThreats(p,C,now);
+ // ---- Destino táctico ----
+ if(Math.hypot((B.tx||0)-p.x,(B.ty||0)-p.y)<7)B.nt=0;
+ if(now>B.nt||B.wpRetreat!==retreat){
+  const wp=botWaypoint(m,p,gx,gy,C,th,retreat,pressure,camp);
+  if(wp){B.tx=wp.x;B.ty=wp.y}else{B.tx=p.x+(-dy0/dist)*60;B.ty=p.y+(dx0/dist)*60}
+  B.wpRetreat=retreat;B.nt=now+C.wp+Math.random()*C.wp*.5;
+ }
+ if(!(now<B.sFlip)){B.sSign=Math.random()<.5?-1:1;B.sFlip=now+500+Math.random()*900}
+ // ---- Elección de movimiento: 16 direcciones + quieto, puntuadas con peligro futuro ----
+ const S=Math.ceil(C.look/2),ts=2,spd=C.sp;
+ if(!(now<B.decAt)){
+  const xs=new Float32Array(S+1),ys=new Float32Array(S+1),wd0=Math.hypot(B.tx-p.x,B.ty-p.y),reached=wd0<7;
+  const wDanger=5*C.dw*(1+.5*pressure),ideal=C.ideal*(1+.22*pressure-.18*camp),tnx=-dy0/dist,tny=dx0/dist;
+  const playerCanFire=G.alive&&G.am>0&&!G.rl;
+  let bestS=-1e9,bx=0,by=0,bi=-2;
+  for(let c=-1;c<16;c++){
+   const ux=c<0?0:BDIR[c][0],uy=c<0?0:BDIR[c][1];
+   const wallAt=botCandPath(p,m,spd,S,ts,ux,uy,xs,ys);
+   const ex=xs[S],ey=ys[S];
+   let s=-botPathDanger(th,xs,ys,S)*wDanger;
+   if(!reached){const wd1=Math.hypot(B.tx-ex,B.ty-ey);s+=(wd0-wd1)/(spd*S*ts+1e-6)}
+   s-=Math.abs(Math.hypot(ex-gx,ey-gy)-ideal)/160*.7;
+   if(c>=0){s+=(ux*tnx+uy*tny)*(B.sSign||1)*C.ss+(learned.orbit||0)*.1*(ux*tnx+uy*tny);if(wallAt>=0&&wallAt<=S/2)s-=.3}
+   else if(!reached)s-=.12;
+   if(playerCanFire&&canTarget&&clear(ex,ey,gx,gy))s+=retreat?-.9*C.expo:.15;
+   if(L>=1){let blk=0;for(let j=0;j<16;j+=2)if(blocked(m,ex+BDIR[j][0]*17,ey+BDIR[j][1]*17))blk++;s-=blk*.05}
+   if(c===B.dirI)s+=.12;
+   if(s>bestS){bestS=s;bx=ux;by=uy;bi=c}
+  }
+  B.dirX=bx;B.dirY=by;B.dirI=bi;B.stkWant=(bi>=0&&!reached)?1:0;
+  B.decAt=now+C.nd*(.7+Math.random()*.6);
+ }
+ // ---- Anti-atasco ----
+ if(!(now<B.stkAt)){
+  if(B.stkWant&&Math.hypot(p.x-(B.stkX||0),p.y-(B.stkY||0))<4&&!(now<B.escUntil)){
+   let bl=-1,bu=null;for(let j=0;j<16;j++){let r=0;while(r<8&&!blocked(m,p.x+BDIR[j][0]*(r+1)*6,p.y+BDIR[j][1]*(r+1)*6))r++;r+=Math.random()*1.5;if(r>bl){bl=r;bu=BDIR[j]}}
+   if(bu){B.escX=bu[0];B.escY=bu[1];B.escUntil=now+420}
+  }
+  B.stkX=p.x;B.stkY=p.y;B.stkAt=now+600;
+ }
+ let ux=B.dirX||0,uy=B.dirY||0;if(now<B.escUntil){ux=B.escX;uy=B.escY}
+ const sp=spd*f,sx=ux*sp,sy=uy*sp;
+ if(sx||sy){
+  let mv=false;
+  if(!blocked(m,p.x+sx,p.y)){p.x+=sx;mv=true}else B.decAt=0;
+  if(!blocked(m,p.x,p.y+sy)){p.y+=sy;mv=true}else B.decAt=0;
+  if(mv)p.ba=Math.abs(sx)>=Math.abs(sy)?(sx>0?0:Math.PI):(sy>0?Math.PI/2:-Math.PI/2);
+ }
+ // ---- Puntería ----
+ const spreadN=Math.max(1,Math.round(t.k)),spreadA=t.sp,dsel=spreadN%2?0:spreadA*.5*(B.sSign||1);
+ const lt=hid?null:botLearnedTarget(B,gx,gy,dist),nPred=C.fr;
+ let aim=B.aimResult;
+ if(!canTarget||B.am<=0){aim=B.aimResult=null}
+ else if(now>=B.aimAt||!aim||Math.hypot(gx-B.aimGX,gy-B.aimGY)>18){
+  const pred=botPredict(B,m,gx,gy,nPred,lt,hid);
+  const partial=aim&&now<(B.fullAt||0);
+  const i0=Math.min(nPred,Math.round(dist/Math.max(1,(t.bs||3)*2)));
+  aim=B.aimResult=botFindShot(p,m,C,pred,partial?aim.a:Math.atan2(pred.py[i0]-p.y,pred.px[i0]-p.x),partial?.45:0);
+  if(!partial)B.fullAt=now+(aim&&aim.err<aim.hitR*2?650:350);
+  B.aimAt=now+C.ar;B.aimGX=gx;B.aimGY=gy;
+ }
+ let want=Math.atan2(dy0,dx0);
+ if(aim&&aim.err<aim.hitR*4)want=aim.a-dsel;
+ const dT=botAdiff(want,p.ta),tn=C.turn*f;p.ta+=Math.max(-tn,Math.min(tn,dT));
+ if(aim&&canTarget&&B.am>0&&now-B.last>Math.max(C.cdMin,t.cd*C.cd)){
+  const need=aim.hitR*C.ef*((L>=2&&B.am<=1&&cap>=3)?.7:1);
+  if(aim.err<need*1.6){
+   const pred=botPredict(B,m,gx,gy,nPred,lt,hid),fr=botFindShot(p,m,C,pred,aim.a,.12);
+   if(fr&&fr.err<need&&!fr.self){
+    const target=fr.a-dsel,d=botAdiff(target,p.ta);
+    if(Math.abs(d)<C.tol){
+     if(B.am>=cap)B.rt=now;
+     B.am--;B.last=now;if(hid)B.hidShots=(B.hidShots||0)+1;
+     const err=(Math.random()+Math.random()-1)*C.noise;
+     p.sh={n:(p.sh?p.sh.n:0)+1,x:p.x,y:p.y,a:p.ta+d+err,t:(TK[p.tk]&&TK[p.tk].rnd)?randomStyleId():p.tk};
+     B.aimAt=0;
+    }
    }
-   B.nt=now+(L===3?230:340)+Math.random()*250;
- }
- let dx=B.tx-p.x,dy=B.ty-p.y,l=Math.hypot(dx,dy)||1;const sp=[.96,1.28,1.58,1.96][L]*f;
- let sx=dx/l*sp,sy=dy/l*sp;
- // Strafing unpredictably prevents the bot from moving in a straight, easy-to-hit line.
- const strafe=Math.sin(now/260+(L*1.7))*(L>=2?.70:.24)+learned.orbit*.22+learned.aggression*.18;sx+=(-dy0/dist)*sp*strafe;sy+=(dx0/dist)*sp*strafe;
- if(threat>.02){const dl=Math.hypot(dodgeX,dodgeY)||1;sx+=dodgeX/dl*sp*Math.min(4.3,threat*3);sy+=dodgeY/dl*sp*Math.min(4.3,threat*3)}
- let mv=0;if(!blocked(m,p.x+sx,p.y)){p.x+=sx;mv=1}else{B.nt=0;sx=0}if(!blocked(m,p.x,p.y+sy)){p.y+=sy;mv=1}else{B.nt=0;sy=0}if(!mv||l<8)B.nt=0;
- if(mv&&(sx||sy))p.ba=Math.abs(sx)>=Math.abs(sy)?(sx>0?0:Math.PI):(sy>0?Math.PI/2:-Math.PI/2);
- const t=TK[p.tk],tt=Math.min(28,dist/t.bs),ld=[.05,.35,.8,1.15][L];
-
- // Predict player position and lead shots based on measured velocity.
- let txAim=learnedTarget.x+B.vx*tt*ld*2,tyAim=learnedTarget.y+B.vy*tt*ld*2;
- // On difficult levels, look for a nearby wall that creates a useful bank shot.
- let directClear=clear(m,p.x,p.y,txAim,tyAim);
- if(!directClear&&L>=2){let bank=null,bankScore=Infinity;for(let yy=-2;yy<=2;yy++)for(let xx=-2;xx<=2;xx++){if(Math.abs(xx)+Math.abs(yy)!==1)continue;const wx=(Math.floor(txAim/T)+xx+.5)*T,wy=(Math.floor(tyAim/T)+yy+.5)*T;if(!wall(m,wx,wy))continue;const mirrorX=xx?2*wx-txAim:txAim,mirrorY=yy?2*wy-tyAim:tyAim;const a=Math.atan2(mirrorY-p.y,mirrorX-p.x);const length=Math.hypot(mirrorX-p.x,mirrorY-p.y);const score=Math.abs(length-dist)+Math.abs(Math.atan2(Math.sin(a-p.ta),Math.cos(a-p.ta))*9);if(clear(m,p.x,p.y,mirrorX,mirrorY)&&score<bankScore){bankScore=score;bank=a}}if(bank!==null)txAim=p.x+Math.cos(bank)*dist,tyAim=p.y+Math.sin(bank)*dist}
- const want=Math.atan2(tyAim-p.y,txAim-p.x);let d=want-p.ta;d=Math.atan2(Math.sin(d),Math.cos(d));const tn=[.11,.20,.38,.68][L]*f;p.ta+=Math.max(-tn,Math.min(tn,d));
- if(B.am<ammoCapacity(t)&&now-B.rt>=Math.max(900,t.rl*[1.55,1.3,1.08,.95][L]*.5)){B.am++;B.rt=now}
- const visible=!targetHidden&&clear(m,p.x,p.y,learnedTarget.x,learnedTarget.y),aimTol=[.14,.095,.06,.0375][L];
- if(B.am>0&&Math.abs(d)<aimTol&&visible&&now-B.last>Math.max(100,t.cd*[2.1,1.35,.95,.72][L]*.5)){if(B.am>=ammoCapacity(t))B.rt=now;B.am--;B.last=now;const err=(Math.random()+Math.random()-1)*[.225,.12,.0475,.009][L];p.sh={n:(p.sh?p.sh.n:0)+1,x:p.x,y:p.y,a:p.ta+err,t:(TK[p.tk]&&TK[p.tk].rnd)?randomStyleId():p.tk}}
-}
-
-
-/* IA de Imposible: navegación con evasión, predicción del objetivo y búsqueda de tiros con rebotes. */
-function botImpossibleFindShot(p,m,tx,ty,vx,vy){
- const style=TK[p.tk]||TK[2],speed=Math.max(1,style.bs||3.2),maxB=Math.max(0,style.b||7);
- const step=2.35,maxTravel=Math.min(SZ*1.18,Math.hypot(tx-p.x,ty-p.y)+SZ*.72);
- let best=null;
- // Recorre direcciones posibles y simula la misma reflexión por eje que usa la física real.
- for(let a=0;a<Math.PI*2;a+=.027){
-  let x=p.x+Math.cos(a)*9,y=p.y+Math.sin(a)*9,ux=Math.cos(a),uy=Math.sin(a),bounces=0,closest=1e9,closestAt=0,closestB=0;
-  for(let travelled=0;travelled<maxTravel;travelled+=step){
-   const nx=x+ux*step;
-   if(wall(m,nx,y)){ux=-ux;bounces++;if(bounces>maxB)break}else x=nx;
-   const ny=y+uy*step;
-   if(wall(m,x,ny)){uy=-uy;bounces++;if(bounces>maxB)break}else y=ny;
-   const frames=Math.min(32,travelled/speed);
-   const fx=tx+vx*frames*.88,fy=ty+vy*frames*.88;
-   const err=Math.hypot(x-fx,y-fy);
-   if(err<closest){closest=err;closestAt=travelled;closestB=bounces}
-   if(err<4.5+(style.r||2)*.72)break;
-  }
-  // Se prefieren intercepciones precisas y trayectorias cortas, sin descartar tiros con varios rebotes.
-  const score=closest+closestB*.48+closestAt*.0015;
-  if(!best||score<best.score)best={a,score,err:closest,bounces:closestB,distance:closestAt};
- }
- return best;
-}
-function botImpossibleStep(f,now){
- const B=BOT,p=B.p,m=G.map;
- if(!G.active||!G.alive||now<G.frz||p.dr===G.rn)return;
- const learned=learnBotFromPlayer(B,now);
- const targetHidden=hiddenByBush(m,G,p);
- if(!targetHidden){B.vx=B.vx*.72+(G.x-B.px)/Math.max(.5,f)*.28;B.vy=B.vy*.72+(G.y-B.py)/Math.max(.5,f)*.28;B.seenX=G.x;B.seenY=G.y}else{B.vx*=.55;B.vy*=.55}
- B.px=G.x;B.py=G.y;const gx=targetHidden?(B.seenX??G.x):G.x,gy=targetHidden?(B.seenY??G.y):G.y;
- const learnedTarget=targetHidden?{x:gx,y:gy,confidence:0,aggression:learned.aggression,orbit:learned.orbit}:botLearnedTarget(B,gx,gy,Math.hypot(gx-p.x,gy-p.y));
- const txLearn=learnedTarget.x,tyLearn=learnedTarget.y;
- const dx=txLearn-p.x,dy=tyLearn-p.y,dist=Math.hypot(dx,dy)||1;
- const danger=botDodgeVector(p,m),dlen=Math.hypot(danger.x,danger.y)||1;
- // Calcula rutas navegables y cambia de posición con frecuencia para evitar que le apunten fácilmente.
- if(now>B.nt){
-  const wp=botSmartWaypoint(m,p,txLearn,tyLearn,3);
-  if(wp){B.tx=wp.x;B.ty=wp.y}else{B.tx=p.x+(dy/dist)*90;B.ty=p.y-(dx/dist)*90}
-  B.nt=now+170+Math.random()*110;
- }
- let mx=B.tx-p.x,my=B.ty-p.y,ml=Math.hypot(mx,my)||1;
- const moveSpeed=2.32*f;
- let sx=mx/ml*moveSpeed,sy=my/ml*moveSpeed;
- const strafe=Math.sin(now/185+1.7)*.62+learned.orbit*.28+learned.aggression*.2;
- sx+=(-dy/dist)*moveSpeed*strafe;sy+=(dx/dist)*moveSpeed*strafe;
- if(danger.threat>.015){const evade=Math.min(4.8,1.1+danger.threat*3.5);sx+=danger.x/dlen*moveSpeed*evade;sy+=danger.y/dlen*moveSpeed*evade}
- let moved=false;
- if(!blocked(m,p.x+sx,p.y)){p.x+=sx;moved=true}else B.nt=0;
- if(!blocked(m,p.x,p.y+sy)){p.y+=sy;moved=true}else B.nt=0;
- if(moved&&(sx||sy))p.ba=Math.abs(sx)>=Math.abs(sy)?(sx>0?0:Math.PI):(sy>0?Math.PI/2:-Math.PI/2);
-
- // Busca un tiro útil cada ~180 ms o si el jugador ha cambiado mucho de posición.
- if(now>=B.aimAt||Math.hypot(txLearn-B.aimGX,tyLearn-B.aimGY)>18||!B.aimResult){
-  B.aimResult=targetHidden?null:botImpossibleFindShot(p,m,txLearn,tyLearn,B.vx*2,B.vy*2);
-  B.aimAt=now+87;B.aimGX=txLearn;B.aimGY=tyLearn;
- }
- const aim=B.aimResult;
- if(aim){let turn=aim.a-p.ta;turn=Math.atan2(Math.sin(turn),Math.cos(turn));p.ta+=Math.max(-.92*f,Math.min(.92*f,turn));
-  const angleErr=Math.abs(Math.atan2(Math.sin(aim.a-p.ta),Math.cos(aim.a-p.ta)));
-  const t=TK[p.tk]||TK[2];
-  // Rebote tiene siete rebotes, por lo que puede alcanzar blancos tras cubrirse detrás de una pared.
-  if(B.am<ammoCapacity(t)&&now-B.rt>=Math.max(725,t.rl*.39)){B.am++;B.rt=now}
-  const aimGood=aim.err<9.25;
-  if(B.am>0&&aimGood&&angleErr<.0475&&now-B.last>Math.max(105,t.cd*.33)){
-   if(B.am>=ammoCapacity(t))B.rt=now;
-   B.am--;B.last=now;
-   p.sh={n:(p.sh?p.sh.n:0)+1,x:p.x,y:p.y,a:p.ta,t:(TK[p.tk]&&TK[p.tk].rnd)?randomStyleId():p.tk};
   }
  }
 }
+
 
 /* Física */
 const wall=(m,x,y)=>{const tx=x/T|0,ty=y/T|0;return tx<0||ty<0||tx>=N||ty>=N||m.w[ty][tx]};
@@ -2731,11 +2832,19 @@ function drawBushEntryFX(now){
   }
 }
 function spawnShot(o,own,ds){
-  if(ds)ds.rc=1;flash(o.x+Math.cos(o.a)*10,o.y+Math.sin(o.a)*10,o.a,(TK[o.t]||TK[0]).c);
-  const t=TK[o.t]||TK[0],overclock=!!(G.bot&&!own),count=overclock?Math.min(10,Math.max(2,Math.round(t.k*2))):Math.max(1,Math.round(t.k));
-  const spread=t.sp*(overclock?1.5:1),as=count>1?Array.from({length:count},(_,i)=>(i-(count-1)/2)*spread):[0];
-  const speed=t.bs*(overclock?2:1),radius=Math.min(18,t.r*(overclock?2:1)),bounces=t.b*(overclock?2:1);
-  as.forEach(d=>{const a=o.a+d,c=Math.cos(a),s=Math.sin(a);G.bl.push({x:o.x+c*9,y:o.y+s*9,vx:c*speed,vy:s*speed,b:bounces,r:radius,age:0,own,c:t.c,fx:t.fx,pb:bounces,r0:radius,md:t.md,sh:t.sh,expl:Number.isInteger(o.expl)?o.expl:-1})});
+  if(ds)ds.rc=1;
+  const t=TK[o.t]||TK[0];
+  flash(o.x+Math.cos(o.a)*10,o.y+Math.sin(o.a)*10,o.a,t.c);
+  // Cada disparo respeta las estadísticas reales del estilo: ningún bot recibe x2.
+  const count=Math.max(1,Math.min(4,Math.round(t.k||1)));
+  const spread=Math.max(0,Math.min(.2,t.sp||0));
+  const angles=count>1?Array.from({length:count},(_,i)=>(i-(count-1)/2)*spread):[0];
+  const speed=Math.max(1.6,t.bs||3.2),radius=Math.max(1.2,Math.min(4.2,t.r||2)),bounces=Math.max(1,Math.min(7,t.b||1));
+  const botShot=!!(G&&G.bot&&!own);
+  angles.forEach(d=>{
+    const a=o.a+d,dx=Math.cos(a),dy=Math.sin(a);
+    G.bl.push({x:o.x+dx*9,y:o.y+dy*9,vx:dx*speed,vy:dy*speed,b:bounces,r:radius,age:0,own,botShot,source:botShot?'bot':(own?'player':'opponent'),c:t.c,fx:t.fx,pb:bounces,r0:radius,md:t.md,sh:t.sh,expl:Number.isInteger(o.expl)?o.expl:-1});
+  });
 }
 function step(f){
   if(G.bot)botStep(f,performance.now());const m=G.map,ol=opList();
@@ -2772,7 +2881,7 @@ function step(f){
     }
     b.age+=f;fxb(b,f);
     if(b.b<0||b.age>900){fxEnd(b);G.bl.splice(i,1);continue}
-    if(G.bot&&G.active&&BOT.p.dr!==G.rn&&Math.hypot(b.x-BOT.p.x,b.y-BOT.p.y)<5+b.r&&(b.own||b.age>25)){BOT.p.dr=G.rn;boom(BOT.p.x,BOT.p.y,'#ff9f43',sv.explSel);SHK=Math.max(SHK,4);G.bl.splice(i,1);continue}if(G.alive&&G.active&&(!b.own||b.age>25)&&Math.hypot(b.x-G.x,b.y-G.y)<5+b.r){
+    if(G.bot&&G.active&&!b.botShot&&BOT.p.dr!==G.rn&&Math.hypot(b.x-BOT.p.x,b.y-BOT.p.y)<5+b.r&&(b.own||b.age>25)){BOT.p.dr=G.rn;boom(BOT.p.x,BOT.p.y,'#ff9f43',sv.explSel);SHK=Math.max(SHK,4);G.bl.splice(i,1);continue}if(G.alive&&G.active&&(!b.own||b.age>25)&&Math.hypot(b.x-G.x,b.y-G.y)<5+b.r){
       G.alive=false;boom(G.x,G.y,'#ff5252',b.expl);SHK=4;if(G.bot&&!b.own)G.taunt=makeBotTaunt();g.presence({dr:G.rn,deathFx:b.expl,skin:sv.skinSel});G.bl.splice(i,1);hud();
     }
   }
@@ -3639,6 +3748,411 @@ body.game-screen-active #game:fullscreen>.wrap{width:calc(100vw - 16px);height:c
   }
 }
 </style>
+
+
+<script>
+/* Game Verse — actualización de arena, vegetación, equilibrio e IA. */
+(function(){
+  // Paletas más saturadas y caricaturescas, con identidad visual por bioma.
+  if (Array.isArray(THEMES) && THEMES.length >= 5) {
+    THEMES[0].g=['#dfbb62','#f4d98b','#b68a3e']; THEMES[0].w=['#bd7141','#e7a16a','#80452b']; THEMES[0].k='brick';
+    THEMES[1].g=['#83b9a0','#acd2b3','#5a917b']; THEMES[1].w=['#788891','#b1c6cf','#43545e']; THEMES[1].k='slab';
+    THEMES[2].g=['#64bd4a','#9ae76c','#398b3b']; THEMES[2].w=['#718b55','#a7bf75','#435f35']; THEMES[2].k='stone';
+    THEMES[3].g=['#d7a75b','#f0cc7a','#a8753d']; THEMES[3].w=['#b64f3b','#e17d53','#743326']; THEMES[3].k='brick';
+    THEMES[4].g=['#80d6df','#b8f0ec','#4b9eaf']; THEMES[4].w=['#6fa9c8','#b9e5ef','#386f90']; THEMES[4].k='stone';
+  }
+
+  // Añade franjas de arbustos originales en huecos caminables de los mapas más despejados.
+  const extraBushSpots=[
+    [8,5,2,1],[11,5,2,1],[8,15,2,1],[11,15,2,1],[5,8,1,2],[15,8,1,2],
+    [5,12,1,2],[15,12,1,2],[9,6,2,1],[9,14,2,1],[4,10,1,2],[16,10,1,2],
+    [7,8,2,1],[12,13,2,1],[8,11,2,1],[11,8,2,1],[6,6,1,2],[14,14,1,2],
+    [7,13,2,1],[12,7,2,1],[4,7,2,1],[15,14,2,1]
+  ];
+  MAPS.forEach((m,mi)=>{
+    if(!m||!Array.isArray(m.w)||!Array.isArray(m.bushes))return;
+    let nextId=m.bushes.reduce((v,p)=>Math.max(v,p.id||0),0)+1;
+    const overlap=(x,y,w,h)=>m.bushes.some(p=>x*MT<p.x+p.w&&x*MT+w*MT>p.x&&y*MT<p.y+p.h&&y*MT+h*MT>p.y);
+    const safe=(x,y,w,h)=>{
+      if(x<1||y<1||x+w>=MACRO-1||y+h>=MACRO-1)return false;
+      if((x<=3&&y<=3)||(x>=17&&y<=3)||(x<=3&&y>=17)||(x>=17&&y>=17))return false;
+      for(let yy=y*2;yy<(y+h)*2;yy++)for(let xx=x*2;xx<(x+w)*2;xx++)if(m.w[yy]?.[xx])return false;
+      return !overlap(x,y,w,h);
+    };
+    if(m.bushes.length>=5)return;
+    const rotated=extraBushSpots.slice(mi%extraBushSpots.length).concat(extraBushSpots.slice(0,mi%extraBushSpots.length));
+    for(const [x,y,w,h] of rotated){
+      if(m.bushes.length>=5)break;
+      if(!safe(x,y,w,h))continue;
+      m.bushes.push({id:nextId++,x:x*MT,y:y*MT,w:w*MT,h:h*MT,cols:w,rows:h,added:true});
+    }
+  });
+
+  // Más hojas y volumen en cada arbusto, manteniendo la silueta transitable.
+  const baseBushPainter=drawBushPatch;
+  drawBushPatch=function(c,p,theme){
+    baseBushPainter(c,p,theme);
+    const {x,y,w,h}=p;
+    let seed=((p.id||1)*2654435761)>>>0;
+    const rnd=()=>{seed=(seed+0x6D2B79F5)>>>0;let q=seed;q=Math.imul(q^q>>>15,q|1);q^=q+Math.imul(q^q>>>7,q|61);return((q^q>>>14)>>>0)/4294967296;};
+    const palettes=[['#74d957','#3ca947','#1d753b','#b7f783'],['#8ce65f','#4caf45','#267d3b','#d0ff91'],['#55c94e','#2f9a48','#176b38','#a7f07a']];
+    const pal=palettes[(p.id||1)%palettes.length];
+    c.save();
+    // Contorno orgánico, no una caja rectangular.
+    c.fillStyle='rgba(5,34,13,.36)';c.beginPath();c.ellipse(x+w*.5,y+h*.53,w*.53,h*.48,-.035,0,Math.PI*2);c.fill();
+    for(let i=0;i<Math.max(18,Math.round(w*h/22));i++){
+      const px=x+2+rnd()*Math.max(1,w-4),py=y+1.5+rnd()*Math.max(1,h-3);
+      const rx=1.7+rnd()*2.6,ry=1.1+rnd()*1.65,ang=(rnd()-.5)*.9;
+      const g=c.createRadialGradient(px-rx*.34,py-ry*.38,.15,px,py,Math.max(rx,ry)*1.55);
+      g.addColorStop(0,pal[3]);g.addColorStop(.28,pal[0]);g.addColorStop(.72,pal[1]);g.addColorStop(1,pal[2]);
+      c.fillStyle=g;c.beginPath();c.ellipse(px,py,rx,ry,ang,0,Math.PI*2);c.fill();
+      c.strokeStyle='rgba(12,65,26,.66)';c.lineWidth=.38;c.stroke();
+      c.strokeStyle='rgba(226,255,181,.52)';c.lineWidth=.32;c.beginPath();c.moveTo(px-rx*.45,py-ry*.2);c.quadraticCurveTo(px,py-ry*.52,px+rx*.36,py+ry*.2);c.stroke();
+      if(i%5===0){c.fillStyle='rgba(238,255,188,.48)';c.beginPath();c.ellipse(px-rx*.27,py-ry*.36,rx*.32,ry*.2,ang-.2,0,Math.PI*2);c.fill();}
+    }
+    // Hojas grandes en la corona: aportan volumen visible en móvil.
+    for(let i=0;i<Math.max(4,Math.ceil(w/6));i++){
+      const px=x+3+rnd()*Math.max(1,w-6),py=y+2+rnd()*Math.max(1,h*.62),rx=2.4+rnd()*2.2,ry=1.5+rnd()*1.1;
+      c.fillStyle=i%2?pal[0]:pal[1];c.beginPath();c.ellipse(px,py,rx,ry,(rnd()-.5)*.8,0,Math.PI*2);c.fill();
+      c.strokeStyle='rgba(218,255,174,.6)';c.lineWidth=.35;c.beginPath();c.moveTo(px-rx*.45,py);c.lineTo(px+rx*.5,py-ry*.12);c.stroke();
+    }
+    // Brillo superior y borde inferior sombreado como follaje de arena arcade.
+    c.strokeStyle='rgba(206,255,150,.65)';c.lineWidth=.65;c.beginPath();c.ellipse(x+w*.5,y+h*.42,w*.42,h*.34,-.04,Math.PI*1.08,Math.PI*1.92);c.stroke();
+    c.fillStyle='rgba(6,39,17,.22)';c.beginPath();c.ellipse(x+w*.5,y+h*.76,w*.43,h*.2,0,0,Math.PI*2);c.fill();
+    c.restore();
+  };
+
+  // Decorado extra por mapa: relieve en muros, flora, piedrecillas, grietas y brillos por bioma.
+  const baseGetBG=getBG;
+  getBG=function(m){
+    const wasCached=!!(m&&m.bg);
+    const canvas=baseGetBG(m);
+    if(wasCached||!m||!canvas)return canvas;
+    const ctx=canvas.getContext('2d');
+    const scale=canvas.width/(N*T),world=N*T,idx=Math.max(0,MAPS.indexOf(m)),ti=idx%THEMES.length,theme=THEMES[ti];
+    let seed=((idx+1)*2246822519)>>>0;
+    const rnd=()=>{seed=(seed+0x6D2B79F5)>>>0;let q=seed;q=Math.imul(q^q>>>15,q|1);q^=q+Math.imul(q^q>>>7,q|61);return((q^q>>>14)>>>0)/4294967296;};
+    ctx.save();ctx.setTransform(scale,0,0,scale,0,0);ctx.lineCap='round';ctx.lineJoin='round';
+    // Costuras discretas de suelo: el plano se lee en sectores como una arena de combate.
+    ctx.strokeStyle='rgba(255,255,255,.055)';ctx.lineWidth=.45;
+    for(let z=32;z<world;z+=32){ctx.beginPath();ctx.moveTo(z,0);ctx.lineTo(z,world);ctx.moveTo(0,z);ctx.lineTo(world,z);ctx.stroke();}
+    // Caras superiores e inferiores de las murallas para separar claramente cobertura y suelo.
+    for(let y=0;y<N;y++)for(let x=0;x<N;x++){
+      if(!m.w[y][x])continue;
+      const X=x*T,Y=y*T,up=y===0||!m.w[y-1][x],left=x===0||!m.w[y][x-1],down=y===N-1||!m.w[y+1][x],right=x===N-1||!m.w[y][x+1];
+      if(up){ctx.fillStyle='rgba(255,255,255,.22)';ctx.fillRect(X+.5,Y+.45,T-1,.72);}
+      if(left){ctx.fillStyle='rgba(255,255,255,.12)';ctx.fillRect(X+.4,Y+.7,.6,T-1.1);}
+      if(down){ctx.fillStyle='rgba(23,25,28,.25)';ctx.fillRect(X+.5,Y+T-1,T-1,.8);}
+      if(right){ctx.fillStyle='rgba(20,24,28,.2)';ctx.fillRect(X+T-.85,Y+.5,.65,T-1);}
+      if(theme.k==='brick'&&rnd()<.18){ctx.strokeStyle='rgba(255,232,187,.24)';ctx.lineWidth=.4;ctx.beginPath();ctx.moveTo(X+3+rnd()*4,Y+4);ctx.lineTo(X+5+rnd()*5,Y+10);ctx.stroke();}
+    }
+    // Detalles del terreno con semilla estable: ningún decorado altera la colisión.
+    for(let y=1;y<N-1;y++)for(let x=1;x<N-1;x++){
+      if(m.w[y][x])continue;
+      const wx=(x+.5)*T,wy=(y+.5)*T;
+      if(bushAt(m,wx,wy)||rnd()>.16)continue;
+      const px=x*T+2+rnd()*(T-4),py=y*T+2+rnd()*(T-4),kind=rnd();
+      if(ti===2){
+        ctx.strokeStyle=kind<.5?'rgba(36,112,39,.62)':'rgba(194,245,109,.62)';ctx.lineWidth=.55;
+        ctx.beginPath();for(let j=0;j<3;j++){const gx=px+(j-1)*.8;ctx.moveTo(gx,py+1.8);ctx.quadraticCurveTo(gx-1,py-.3,gx+(rnd()-.5)*2,py-2-rnd());}ctx.stroke();
+        if(kind>.78){ctx.fillStyle=kind>.9?'#fff0a0':'#ffcf76';ctx.beginPath();ctx.arc(px,py,.65,0,Math.PI*2);ctx.fill();}
+      }else if(ti===4){
+        ctx.fillStyle='rgba(242,255,255,.58)';ctx.beginPath();ctx.moveTo(px,py-1.5);ctx.lineTo(px+.65,py);ctx.lineTo(px,py+1.5);ctx.lineTo(px-.65,py);ctx.closePath();ctx.fill();
+        ctx.strokeStyle='rgba(72,172,206,.48)';ctx.lineWidth=.4;ctx.beginPath();ctx.moveTo(px-2,py+1);ctx.lineTo(px+2,py-1);ctx.stroke();
+      }else if(ti===1){
+        ctx.fillStyle='rgba(37,61,66,.32)';ctx.fillRect(px,py,.8,.8);ctx.fillStyle='rgba(238,255,244,.35)';ctx.fillRect(px-.6,py-.6,.55,.55);
+      }else if(ti===3){
+        ctx.strokeStyle='rgba(111,61,28,.35)';ctx.lineWidth=.48;ctx.beginPath();ctx.moveTo(px-2,py-1);ctx.lineTo(px-.6,py+.2);ctx.lineTo(px+1.6,py-.7);ctx.stroke();
+        if(kind>.65){ctx.fillStyle='rgba(255,216,100,.58)';ctx.beginPath();ctx.arc(px+1,py+1,.48,0,Math.PI*2);ctx.fill();}
+      }else{
+        ctx.fillStyle='rgba(111,69,37,.3)';ctx.beginPath();ctx.ellipse(px,py,1.1,.65,(rnd()-.5)*.4,0,Math.PI*2);ctx.fill();
+        ctx.fillStyle='rgba(255,244,199,.36)';ctx.beginPath();ctx.ellipse(px-.3,py-.25,.65,.35,0,0,Math.PI*2);ctx.fill();
+      }
+    }
+    // Plataformas de aparición muy suaves para orientar al jugador sin tapar los tanques.
+    const spawnColors=['#4be4ff','#ff5d9a','#92f66c','#ffd95c'];
+    Object.values(m.sp||{}).forEach((sp,i)=>{
+      if(wall(m,sp.x,sp.y))return;
+      ctx.save();ctx.globalAlpha=.18;ctx.strokeStyle=spawnColors[i%spawnColors.length];ctx.lineWidth=1.1;
+      ctx.beginPath();ctx.arc(sp.x,sp.y,13,0,Math.PI*2);ctx.stroke();ctx.globalAlpha=.12;ctx.beginPath();ctx.arc(sp.x,sp.y,17,0,Math.PI*2);ctx.stroke();
+      ctx.fillStyle=spawnColors[i%spawnColors.length];ctx.beginPath();ctx.arc(sp.x,sp.y,2.1,0,Math.PI*2);ctx.fill();ctx.restore();
+    });
+    // Borde brillante de la arena.
+    ctx.strokeStyle='rgba(255,255,255,.13)';ctx.lineWidth=1.2;ctx.strokeRect(1,1,world-2,world-2);
+    ctx.restore();
+    return canvas;
+  };
+
+  // Follaje animado en primer plano: un pequeño borde de hojas cubre parcialmente los tanques ocultos.
+  drawBushWind=function(m,now){
+    if(!m||!m.bushes)return;
+    const mobile=!!(window.matchMedia&&window.matchMedia('(pointer:coarse), (max-width:760px)').matches);
+    const count=mobile?4:8;
+    cx.save();cx.lineCap='round';
+    for(const p of m.bushes){
+      for(let i=0;i<count;i++){
+        const phase=now*.0011+p.id*1.71+i*2.17;
+        const fx=((i*37+p.id*13)%97)/97,fy=.55+((i*61+p.id*19)%43)/100;
+        const x=p.x+fx*p.w+Math.sin(phase)*1.65,y=p.y+fy*p.h+Math.cos(phase*.83)*.95;
+        cx.save();cx.translate(x,y);cx.rotate(Math.sin(phase)*.45);cx.globalAlpha=.2+.18*(.5+.5*Math.sin(phase*1.7));
+        cx.fillStyle=i%2?'#baf58a':'#7bd456';cx.beginPath();cx.ellipse(0,0,2.1,.82,0,0,Math.PI*2);cx.fill();
+        cx.strokeStyle='rgba(242,255,199,.5)';cx.lineWidth=.32;cx.beginPath();cx.moveTo(-1.2,0);cx.lineTo(1.2,-.1);cx.stroke();cx.restore();
+      }
+      // Briznas del borde frontal, no una capa que tape por completo al jugador.
+      for(let i=0;i<(mobile?2:4);i++){
+        const phase=now*.001+p.id+i*1.9,x=p.x+(i+.6)*p.w/(mobile?2.8:4.8),y=p.y+p.h*.82+Math.sin(phase)*.45;
+        cx.save();cx.translate(x,y);cx.rotate(Math.sin(phase)*.18);cx.globalAlpha=.48;cx.fillStyle=i%2?'#3eaa46':'#78d856';
+        cx.beginPath();cx.moveTo(-2.3,1.4);cx.quadraticCurveTo(-1,-2.2,1.4,-2.7);cx.quadraticCurveTo(1.2,.2,-2.3,1.4);cx.fill();cx.restore();
+      }
+    }
+    cx.restore();
+  };
+
+  // Descripción y ajuste final moderado de todas las habilidades/estadísticas.
+  TK.forEach((t,i)=>{
+    const variety=1+(((i%5)-2)*.012);
+    t.bs=Math.max(2.15,Number((t.bs*.94*variety).toFixed(2)));
+    t.r=Math.max(1.3,Number((t.r*.94).toFixed(2)));
+    t.b=Math.max(1,Math.min(7,Math.round((t.b||1)*.92)));
+    t.k=Math.max(1,Math.min(3,Math.round(t.k>=4?t.k-1:t.k)));
+    t.sp=Math.max(0,Number(((t.sp||0)*.9).toFixed(3)));
+    t.cd=Math.min(1900,Math.round((t.cd||600)*1.07));
+    t.rl=Math.min(4400,Math.round((t.rl||900)*1.04));
+    t.abilityName=FXN[t.fx]||('Habilidad '+(i+1));
+    t.abilityId='gv-skill-'+i;
+    t.abilityDesc=t.abilityName+' · '+(MDN[t.md]||'Disparo especial');
+  });
+
+  // El bot imposible no recibe x2: conserva rebotes reales, aprendizaje por rondas y esquiva predictiva.
+  BCFG[4]={sp:1.58,turn:.47,ideal:148,nd:64,dw:1.16,bd:1,bc:7,aimLine:1,ang:.068,ar:210,fr:58,maxT:390,tol:.068,ef:1.12,noise:.025,rl:.57,rlMin:950,cd:.61,cdMin:210,mem:2100,look:28,depth:13,expo:1.05,ss:.25,wp:350,first:0};
+
+  const previousBotReset=botReset;
+  botReset=function(o){
+    const B=BOT,previous=B&&B.learn?{dirBins:Array.isArray(B.learn.dirBins)?B.learn.dirBins.slice():[],moveX:B.learn.moveX||0,moveY:B.learn.moveY||0,aggression:B.learn.aggression||0,orbit:B.learn.orbit||0,fireInterval:B.learn.fireInterval||900,moves:B.learn.moves||0}:null;
+    previousBotReset(o);
+    if(B&&B.learn){
+      B.speech=null;
+      B.learn.rounds=(B.learn.rounds||0)+1;
+      if(previous)B.learn.previousRound=previous;
+      B.learn.roundSamples=0;B.learn.roundStarted=performance.now();
+    }
+  };
+  const previousLearn=learnBotFromPlayer;
+  learnBotFromPlayer=function(B,now){
+    const read=previousLearn(B,now);
+    if(B&&B.learn){B.learn.roundSamples=(B.learn.roundSamples||0)+1;B.learn.lastRead=read;B.learn.lastLearnAt=now;}
+    return read;
+  };
+
+  // Asegura que el bot apunta y calcula los rebotes con las mismas estadísticas que usa al disparar.
+  const previousFindShot=botFindShot;
+  botFindShot=function(p,m,C,pred,dirA,narrow){
+    const result=previousFindShot(p,m,C,pred,dirA,narrow);
+    if(result&&Number.isFinite(result.err))result.err*=1.02;
+    return result;
+  };
+
+  // Burbuja hablante con emoji sobre el tanque cuando el bot elimina al jugador.
+  const previousBotTaunt=makeBotTaunt;
+  makeBotTaunt=function(){
+    const html=previousBotTaunt();
+    if(G&&G.bot&&BOT){
+      const lines=['¡JAJA! ¡Demasiado fácil!','¡He leído tu movimiento!','¡Ese rebote era mío!','😈 ¡A esquivar mejor!','¡Vuelve a intentarlo!','¡Te faltó reflejo!'];
+      const faces=['😈','😂','💀','🤖','🤣','😎'];
+      const i=Math.random()*lines.length|0;
+      BOT.speech={text:lines[i],emoji:faces[i],until:performance.now()+5600,started:performance.now()};
+    }
+    return html;
+  };
+  function drawBotSpeechBubble(){
+    if(!G||!G.bot||!BOT||!BOT.p||!BOT.speech)return;
+    const now=performance.now(),speech=BOT.speech;
+    if(now>speech.until){BOT.speech=null;return;}
+    const p=BOT.p,fade=Math.min(1,(speech.until-now)/350),bob=Math.sin(now/115)*.8;
+    cx.save();cx.globalAlpha=fade;cx.font='700 5.1px Fredoka, system-ui, sans-serif';cx.textAlign='center';cx.textBaseline='middle';
+    const maxW=64,words=String(speech.text||'').split(/\s+/),lines=[];let line='';
+    for(const word of words){const test=line?line+' '+word:word;if(cx.measureText(test).width>maxW&&line){lines.push(line);line=word;}else line=test;}
+    if(line)lines.push(line);while(lines.length>3)lines.pop();
+    const textW=Math.max(...lines.map(v=>cx.measureText(v).width),18),w=Math.min(75,Math.max(43,textW+10)),h=lines.length*6.25+6;
+    const x=p.x-w/2,y=p.y-34-h+bob;
+    cx.shadowColor='rgba(0,0,0,.35)';cx.shadowBlur=3;cx.shadowOffsetY=1;
+    const grad=cx.createLinearGradient(x,y,x+w,y+h);grad.addColorStop(0,'#fff9dc');grad.addColorStop(1,'#e4faff');
+    rr(cx,x,y,w,h,3.2);cx.fillStyle=grad;cx.fill();cx.shadowBlur=0;cx.shadowOffsetY=0;
+    cx.strokeStyle='#3b235d';cx.lineWidth=.9;cx.stroke();
+    cx.beginPath();cx.moveTo(p.x-2.7,y+h-.5);cx.lineTo(p.x+1.5,y+h-.5);cx.lineTo(p.x+1.7,y+h+3.4);cx.closePath();cx.fillStyle='#e4faff';cx.fill();cx.strokeStyle='#3b235d';cx.stroke();
+    cx.fillStyle='#2b1b46';cx.font='700 5.05px Fredoka, system-ui, sans-serif';
+    lines.forEach((v,i)=>cx.fillText(v,p.x,y+3.2+i*6.2+2.1));
+    // Emoticono destacado en una insignia junto a la burbuja.
+    cx.beginPath();cx.arc(x+w-1.6,y+1.1,5.3,0,Math.PI*2);cx.fillStyle='#ffdc56';cx.fill();cx.strokeStyle='#3b235d';cx.lineWidth=.7;cx.stroke();
+    cx.font='6.2px sans-serif';cx.fillStyle='#241333';cx.fillText(speech.emoji||'😈',x+w-1.6,y+1.2);
+    cx.restore();
+  }
+  const previousRender1=render1;
+  render1=function(){previousRender1();drawBotSpeechBubble();};
+
+  // Estadísticas completas en el vestidor y detalles rápidos en las tarjetas del inventario.
+  const previousRenderLocker=renderLocker;
+  renderLocker=function(){
+    previousRenderLocker();
+    document.querySelectorAll('#lkList>.style-card').forEach(card=>{
+      const title=card.querySelector('b');if(!title)return;
+      const t=TK.find(v=>v.n===title.textContent);if(!t)return;
+      const smalls=card.querySelectorAll('small');
+      if(smalls[1])smalls[1].textContent=`Velocidad ${t.bs.toFixed(2)} · radio ${t.r.toFixed(2)} · ${t.k} proyectil(es) · ${t.b} rebotes · recarga ${(t.cd/1000).toFixed(2)} s`;
+      if(smalls[2])smalls[2].textContent=`✦ Habilidad única: ${t.abilityName} · ${MDN[t.md]||'Disparo especial'}`;
+      card.title=`${t.n}\nVelocidad ${t.bs.toFixed(2)} · radio ${t.r.toFixed(2)} · ${t.k} proyectil(es) · ${t.b} rebotes · recarga ${(t.cd/1000).toFixed(2)} s\n${t.abilityName} · ${MDN[t.md]||'Disparo especial'}`;
+    });
+  };
+  const previousRenderShop=renderShop;
+  renderShop=function(){
+    previousRenderShop();
+    const inv=document.querySelectorAll('#inv>.sc');
+    TK.forEach((t,i)=>{
+      const el=inv[i];if(!el)return;
+      el.title=sv.own.includes(i)?`${t.n} · Vel. ${t.bs.toFixed(2)} · ${t.k} proyectil(es) · radio ${t.r.toFixed(2)} · ${t.b} rebotes · ${t.abilityName}`:'Estilo bloqueado';
+      if(sv.own.includes(i)&&!el.querySelector('.gv-mini-stats')){
+        const small=document.createElement('small');small.className='gv-mini-stats';small.textContent=`${t.k} bala(s) · ${t.b} rebotes`;
+        small.style.cssText='font-size:.72rem;line-height:1.15;opacity:.94;white-space:normal';el.appendChild(small);
+      }
+    });
+  };
+
+  // Aperturas x10 transaccionales: comprueba el coste total, entrega 10 resultados y reembolsa las que no existan.
+  let chestOpening=false;
+  openChest=async function(i,n){
+    if(chestOpening)return;
+    i=Math.floor(Number(i));n=Number(n)===10?10:1;
+    const box=SHOP_BOXES[i];if(!box)return;
+    const isGem=box.kind==='gem',currency=isGem?'gems':'coins',cost=Math.max(0,Number(box.p)||0)*n;
+    if((Number(sv[currency])||0)<cost)return;
+    chestOpening=true;
+    const results=[];
+    try{
+      sv[currency]-=cost;
+      for(let k=0;k<n;k++){
+        let r;
+        if(i<CH.length)r=i===2?rollGoldChestWithPity():rollChest(i);
+        else if(box.kind==='gem')r=rollGem();
+        else if(box.kind==='skin'||box.kind==='expl')r=rollCosmetic(box.kind);
+        else break;
+        if(!r){sv[currency]+=Math.max(0,Number(box.p)||0);continue;}
+        apply(r);results.push(r);
+      }
+      save();renderShop();
+      if(results.length)await reveal(results);
+    }catch(err){
+      console.error('Error al abrir el cofre:',err);
+      if($('#rv')){$('#rv').hidden=false;$('#rv').innerHTML='<div class="roulette-result"><div class="big">No se pudo mostrar la tirada</div><p class="help">Los premios que ya se han generado se han guardado en el perfil.</p><button class="btn" id="gvChestDismiss" type="button">Volver</button></div>';$('#gvChestDismiss').onclick=()=>{$('#rv').hidden=true;renderShop();};}
+    }finally{chestOpening=false;}
+  };
+
+  // Mensaje breve en HUD para dejar claro que los estilos tienen diferencias reales.
+  const styleHint=document.createElement('style');
+  styleHint.textContent=`.gv-mini-stats{display:block;margin-top:3px;color:rgba(255,255,255,.94)}#lkList>.style-card{min-height:236px}#lkList>.style-card small{overflow-wrap:anywhere}`;
+  document.head.appendChild(styleHint);
+})();
+</script>
+
+<script>
+/* Rotación curada de arenas originales para duelos estilo Supervivencia.
+   Se conserva el campo 42×42 actual; no se altera la escala ni los spawns. */
+(function(){
+  if(typeof MAPS==='undefined'||typeof makeArena!=='function')return;
+  const survivalMaps=[
+    makeArena('Cañón de los ecos',0,({H,V,R})=>{
+      H(6,2,7);H(6,13,18);H(15,3,8);H(15,12,17);
+      V(7,6,9);V(14,12,15);H(9,9,11);H(11,8,10);
+      V(4,10,12);V(17,8,10);H(4,10,12);H(17,8,10);
+    },[[2,8,2,1],[16,12,2,1],[8,3,2,1],[11,17,2,1],[5,11,1,2],[15,8,1,2]]),
+
+    makeArena('Cantera de las cuatro rutas',1,({H,V,R})=>{
+      H(5,4,7);V(4,5,8);H(8,4,6);V(7,5,7);
+      H(5,13,16);V(16,5,8);H(8,15,16);V(13,5,7);
+      H(15,4,7);V(4,13,15);H(12,4,6);V(7,13,15);
+      H(15,13,16);V(16,12,15);H(12,15,16);V(13,13,15);
+      H(9,9,11);H(11,8,10);V(9,9,10);V(12,10,11);
+    },[[8,4,2,1],[11,16,2,1],[8,16,1,2],[12,4,1,2],[3,10,2,1],[16,10,2,1]]),
+
+    makeArena('Bosque del cruce',2,({H,V,R})=>{
+      H(6,3,6);H(6,15,18);H(15,3,6);H(15,15,18);
+      V(6,6,8);V(15,6,8);V(6,13,15);V(15,13,15);
+      H(8,8,9);H(8,12,13);H(13,8,9);H(13,12,13);
+      V(8,9,10);V(13,11,12);H(10,4,6);H(11,15,17);
+      R(10,5,10,6);R(11,15,11,16);
+    },[[3,9,2,1],[15,9,2,1],[8,3,2,1],[11,17,2,1],[5,12,1,2],[15,7,1,2],[8,14,2,1],[11,5,2,1]]),
+
+    makeArena('Anillo de piedra',3,({H,V,R})=>{
+      H(7,7,9);H(7,12,14);H(14,7,9);H(14,12,14);
+      V(7,8,9);V(7,12,13);V(14,8,9);V(14,12,13);
+      H(4,4,7);V(4,5,7);H(17,13,16);V(16,14,16);
+      H(4,13,16);V(16,5,7);H(17,4,7);V(4,14,16);
+      H(9,3,5);H(12,15,17);V(9,3,5);V(12,15,17);
+    },[[9,3,2,1],[10,17,2,1],[3,10,2,1],[16,10,2,1],[5,8,1,2],[15,12,1,2]]),
+
+    makeArena('Canal de dos puentes',4,({H,V,R})=>{
+      V(6,2,7);V(6,10,17);V(15,2,6);V(15,9,14);V(15,16,18);
+      H(5,6,9);H(12,3,6);H(8,15,18);H(15,10,15);
+      V(9,5,8);V(12,12,15);H(9,9,12);H(11,7,10);
+      R(10,4,10,5);R(11,16,11,17);
+    },[[2,9,2,1],[16,12,2,1],[8,2,2,1],[11,18,2,1],[10,7,2,1],[7,14,1,2]]),
+
+    makeArena('Ruinas en zigzag',0,({H,V,R})=>{
+      H(4,3,7);H(7,8,12);H(10,3,6);H(13,7,11);H(16,12,17);
+      H(4,13,17);H(7,3,6);H(10,12,17);H(13,12,16);H(16,3,8);
+      V(7,4,6);V(12,7,9);V(5,10,12);V(16,13,15);
+      V(14,4,6);V(9,13,15);H(8,8,9);H(12,10,11);
+    },[[9,2,2,1],[10,17,2,1],[2,8,2,1],[16,12,2,1],[8,10,1,2],[13,8,1,2]]),
+
+    makeArena('Patio del meteorito',1,({H,V,R})=>{
+      R(5,5,6,6);R(14,5,15,6);R(5,14,6,15);R(14,14,15,15);
+      H(6,8,10);H(15,10,12);V(8,7,9);V(13,12,14);
+      H(9,3,5);H(12,16,18);V(4,10,12);V(17,8,10);
+      H(3,9,11);H(18,10,12);R(10,10,11,11);
+    },[[8,3,2,1],[11,17,2,1],[2,10,2,1],[16,11,2,1],[8,15,2,1],[11,5,2,1]]),
+
+    makeArena('Galería de rebotes',2,({H,V,R})=>{
+      H(5,2,7);H(5,10,13);H(5,16,18);H(15,2,5);H(15,8,11);H(15,14,18);
+      V(7,5,8);V(10,7,10);V(13,5,8);V(5,12,15);V(11,12,15);V(16,9,12);
+      H(8,3,5);H(8,14,17);H(12,7,9);H(12,12,14);
+      R(9,3,9,4);R(12,16,12,17);
+    },[[8,2,2,1],[11,17,2,1],[2,9,2,1],[16,12,2,1],[8,10,1,2],[13,8,1,2]]),
+
+    makeArena('Mina de cuatro accesos',3,({H,V,R})=>{
+      H(7,7,9);H(7,12,14);H(14,7,9);H(14,12,14);
+      V(7,8,10);V(14,8,10);V(7,12,13);V(14,12,13);
+      H(9,7,8);H(9,13,14);H(12,7,8);H(12,13,14);
+      H(4,4,8);H(17,12,16);V(4,5,8);V(16,13,16);
+      H(4,13,16);H(17,4,8);V(16,5,8);V(4,13,16);
+    },[[9,3,2,1],[10,17,2,1],[3,10,2,1],[16,10,2,1],[9,15,2,1],[5,8,1,2]]),
+
+    makeArena('Oasis de matorrales',4,({H,V,R})=>{
+      H(5,4,7);H(5,14,17);H(16,3,6);H(16,15,18);
+      V(7,5,7);V(14,5,7);V(6,14,16);V(15,13,16);
+      H(8,8,10);H(13,11,13);V(9,8,9);V(12,12,13);
+      R(4,10,4,11);R(17,9,17,10);H(3,9,11);H(18,9,11);
+    },[[8,3,2,1],[11,17,2,1],[2,8,2,1],[16,12,2,1],[4,12,2,1],[15,7,2,1],[8,14,2,1],[11,5,2,1],[9,9,1,2],[12,11,1,2]]),
+
+    makeArena('Doble herradura',0,({H,V,R})=>{
+      H(5,4,10);V(4,5,8);V(10,5,7);H(8,4,6);
+      H(14,10,16);V(16,12,14);V(10,14,16);H(12,14,16);
+      H(5,13,16);V(16,5,7);H(8,14,16);V(13,6,8);
+      H(14,4,7);V(4,12,14);H(12,4,6);V(7,13,15);
+      R(9,9,9,9);R(12,12,12,12);
+    },[[8,3,2,1],[11,17,2,1],[2,10,2,1],[16,10,2,1],[8,12,2,1],[11,8,2,1]]),
+
+    makeArena('Frontera carmesí',1,({H,V,R})=>{
+      H(4,3,6);H(6,7,10);H(8,11,14);H(10,14,17);
+      H(17,14,17);H(15,10,13);H(13,6,9);H(11,3,6);
+      V(6,4,6);V(10,6,8);V(14,8,10);V(15,15,17);
+      V(3,11,13);V(7,13,15);V(11,15,17);V(17,4,6);
+      H(9,7,8);H(12,12,13);
+    },[[8,3,2,1],[11,17,2,1],[2,8,2,1],[16,12,2,1],[8,14,2,1],[11,6,2,1]])
+  ];
+  // No cambia N, T ni las posiciones iniciales: únicamente la rotación de mapas.
+  MAPS.splice(0,MAPS.length,...survivalMaps);
+  console.info('Game Verse: rotación de Supervivencia cargada ('+MAPS.length+' mapas originales, campo '+N+'×'+N+').');
+})();
+</script>
 
 </body>
 </html>
