@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -693,7 +694,7 @@ body.mobile-game-active .pwa-install-fab{display:none!important}
 <div class="row play-actions"><button class="btn" id="bSearch">🌐 Buscar partida</button><button class="btn alt" id="bCreate">🏠 Crear sala</button></div>
 <div class="row" id="crOpts" hidden><b style="width:100%">¿Cuántos jugadores? (contándote a ti, máximo 4)</b><button class="btn" data-n="2">2</button><button class="btn" data-n="3">3</button><button class="btn" data-n="4">4</button><button class="btn red" id="crCancel">Cancelar</button></div>
 <div class="row"><input id="code" maxlength="4" placeholder="CÓDIGO" aria-label="Código de sala"><button class="btn alt" id="bJoin">🚪 Unirse a sala</button></div>
-<div><b>🤖 Contra un bot</b><div class="row" style='margin:6px 0'><button class='btn' data-l='0'>Fácil</button><button class='btn alt' data-l='1'>Medio</button><button class='btn red' data-l='2'>Difícil</button><button class='btn' data-l='3' style='background:#14182b;color:#fff'>Pesadilla</button><button class='btn' data-l='4' style='background:linear-gradient(135deg,#ff1744,#6a00f4);color:#fff;border:2px solid #ffd54f;box-shadow:0 0 12px #ff174477'>☠ Imposible · +500 🪙</button></div><p class='help'>Todos los bots cambian de estilo en cada ronda y aprenden tus direcciones frecuentes, tus rodeos y tu ritmo de disparo. Todos los bots intentan esquivar algunas balas sin hacerlo demasiado; la esquiva más precisa y predictiva es exclusiva de Imposible. Todos mantienen el aprendizaje por ronda. Los mapas nuevos son más cerrados y están diseñados para tiros de rebote; los arbustos se atraviesan, se animan al entrar y sirven para esconderse. Si un bot te elimina, puede vacilarte con tu nombre. <b>Imposible</b> es aún más rápido y preciso. Si le ganas la partida, recibes <b>500 🪙</b>.</p></div>
+<div><b>🤖 Contra un bot</b><div class="row" style='margin:6px 0'><button class='btn' data-l='0'>Fácil</button><button class='btn alt' data-l='1'>Medio</button><button class='btn red' data-l='2'>Difícil</button><button class='btn' data-l='3' style='background:#14182b;color:#fff'>Pesadilla</button><button class='btn' data-l='4' style='background:linear-gradient(135deg,#ff1744,#6a00f4);color:#fff;border:2px solid #ffd54f;box-shadow:0 0 12px #ff174477'>☠ Imposible · +500 🪙</button></div><p class='help'>Todos los bots cambian de estilo en cada ronda y aprenden tus direcciones frecuentes, tus rodeos y tu ritmo de disparo. Los bots no predicen la trayectoria de las balas ni se apartan automáticamente de ellas, para que sea más fácil acertarles. La dificultad sigue afectando a su puntería y estrategia, y todos mantienen el aprendizaje por ronda. Los mapas nuevos son más cerrados y están diseñados para tiros de rebote; los arbustos se atraviesan, se animan al entrar y sirven para esconderse. Si un bot te elimina, puede vacilarte con tu nombre. <b>Imposible</b> es aún más rápido y preciso. Si le ganas la partida, recibes <b>500 🪙</b>.</p></div>
 <p class="net" id="net">Conectando…</p>
 <p class="help">En ordenador: muévete con WASD o flechas, apunta con el ratón y dispara con clic. En móvil: joystick izquierdo para moverte, arrastra y suelta el derecho para disparar con puntería, o pulsa Autoapuntar para atacar al rival más cercano. Las balas rebotan. La munición depende de la rareza del estilo. Al quedarte sin balas comienza la recarga automática, que tarda unos segundos; también puedes pulsar R o «Recargar». Gana quien consiga 3 rondas (en salas de 3 o 4 jugadores, la ronda la gana el último tanque en pie). Al terminar la partida te quedas en la sala para jugar otra vez: +150 monedas al ganar, +50 al perder.</p>
 </section>
@@ -2425,7 +2426,7 @@ function hostMatchOver(){
 function finishMatch(win){
   if(!G||G.over)return;
   G.over=true;G.active=false;G.started=false;G.st='lobby';G.auto=false;G.lsig='';
-  const w=win===G.slot,draw=win<0,gain=G.bot?(w?(G.lvl===4?500:[40,80,140,250][G.lvl]):draw?20:10):(w?150:draw?90:50);
+  const w=win===G.slot,draw=win<0,gain=G.bot?2*(w?(G.lvl===4?500:[40,80,140,250][G.lvl]):draw?20:10):(w?150:draw?90:50);
   sv.coins+=gain;const fs=Math.random()<.1;if(fs)sv.free=(sv.free||0)+1;save();
   const showCoinReward=!!G.bot||!(window.matchMedia&&window.matchMedia('(max-width:760px), (pointer:coarse)').matches);
   const txt=(w?'¡Has ganado la partida!':draw?'Empate':'Has perdido la partida'+(G.bot?'':'<br>Ha ganado '+SE[win]+' '+pname(win)))+(G.bot&&!w&&!draw&&G.taunt?'<br><span class="bot-taunt">'+G.taunt+'</span>':'')+(showCoinReward?'<br>+'+gain+' 🪙':'')+(fs?'<br>🎡 ¡Has ganado una ruleta gratis!':'');
@@ -2534,9 +2535,8 @@ function botLearnedTarget(B,x,y,dist){
  return{x:x+px*lead,y:y+py*lead,confidence:conf,aggression:L.aggression,orbit:L.orbit};
 }
 /* ===== IA de bots v2 (todos los niveles) =====
-   - Esquiva predictiva: simula las balas con rebotes (también las del propio bot) y elige entre 17 movimientos el más seguro.
-   - Lee hacia dónde apunta el jugador (línea de tiro con rebotes) y se aparta antes de que dispare.
-   - Puntería: busca ángulos con rebotes, anticipa al jugador (velocidad + hábitos aprendidos) y evita autoimpactos.
+   - No predice las balas entrantes ni se aparta automáticamente de su trayectoria, para que sea más fácil acertarles.
+   - Puntería: busca ángulos con rebotes, anticipa el movimiento del jugador y evita autoimpactos.
    - Táctica: cobertura al quedarse sin munición, arbustos como emboscada, detección de "campers" y de presión, anti-atasco. */
 const BCFG=[
  {sp:.96,turn:.11,ideal:118,nd:200,dw:.8,bd:0,bc:0,aimLine:0,ang:.08,ar:300,fr:34,maxT:240,tol:.13,ef:1.9,noise:.16,rl:.775,rlMin:900,cd:1.05,cdMin:100,mem:0,look:20,depth:10,expo:.4,ss:.12,wp:460,first:1000},
@@ -2707,11 +2707,9 @@ function botStep(f,now){
  // Recarga progresiva
  if(B.am<cap&&now-B.rt>=Math.max(C.rlMin,t.rl*C.rl)){B.am++;B.rt=now}
  const retreat=B.am<=0||(L>=2&&B.am<=1&&cap>=3&&pressure>.45);
- const dodgeFactor=[.30,.40,.53,.68,1][L];
- // Todos detectan balas reales y se apartan con moderación; solo Imposible calcula además la línea de tiro anticipada.
- const threatCfg=L===4?C:{...C,aimLine:0};
- const th=botBuildThreats(p,threatCfg,now);
- if(L<4)for(const threat of th)threat.w*=dodgeFactor;
+ // Sin esquiva predictiva: las balas entrantes no alteran la elección de movimiento.
+ // Así los bots mantienen su ruta táctica y son más fáciles de alcanzar.
+ const th=[];
  // ---- Destino táctico ----
  if(Math.hypot((B.tx||0)-p.x,(B.ty||0)-p.y)<7)B.nt=0;
  if(now>B.nt||B.wpRetreat!==retreat){
