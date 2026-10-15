@@ -695,7 +695,7 @@ body.mobile-game-active .pwa-install-fab{display:none!important}
 <div class="row"><input id="code" maxlength="4" placeholder="CÓDIGO" aria-label="Código de sala"><button class="btn alt" id="bJoin">🚪 Unirse a sala</button></div>
 <div><b>🤖 Contra un bot</b><div class="row" style='margin:6px 0'><button class='btn' data-l='0'>Fácil</button><button class='btn alt' data-l='1'>Medio</button><button class='btn red' data-l='2'>Difícil</button><button class='btn' data-l='3' style='background:#14182b;color:#fff'>Pesadilla</button><button class='btn' data-l='4' style='background:linear-gradient(135deg,#ff1744,#6a00f4);color:#fff;border:2px solid #ffd54f;box-shadow:0 0 12px #ff174477'>☠ Imposible · +500 🪙</button></div><p class='help'>Todos los bots cambian de estilo en cada ronda y aprenden tus direcciones frecuentes, tus rodeos y tu ritmo de disparo. Fácil, Medio, Difícil y Pesadilla esquivan un poco de forma reactiva, sin predecir la trayectoria de las balas. Solo Imposible predice las trayectorias y las líneas de tiro para esquivarlas antes del impacto. La dificultad sigue afectando a su puntería y estrategia, y todos mantienen el aprendizaje por ronda. Los mapas nuevos son más cerrados y están diseñados para tiros de rebote; los arbustos se atraviesan, se animan al entrar y sirven para esconderse. Si un bot te elimina, puede vacilarte con tu nombre. <b>Imposible</b> es aún más rápido y preciso. Si le ganas la partida, recibes <b>500 🪙</b>.</p></div>
 <p class="net" id="net">Conectando…</p>
-<p class="help">En ordenador: muévete con WASD o flechas, apunta con el ratón y dispara con clic. En móvil: joystick izquierdo para moverte, arrastra y suelta el derecho para disparar con puntería, o pulsa Autoapuntar para atacar al rival más cercano. Las balas rebotan. La munición depende de la rareza del estilo. Al quedarte sin balas comienza la recarga automática, que tarda unos segundos; también puedes pulsar R o «Recargar». Gana quien consiga 3 rondas (en salas de 3 o 4 jugadores, la ronda la gana el último tanque en pie). Al terminar la partida te quedas en la sala para jugar otra vez: +150 monedas al ganar, +50 al perder.</p>
+<p class="help">En ordenador: muévete con WASD o flechas, apunta con el ratón y dispara con clic. En móvil: joystick izquierdo para moverte, arrastra y suelta el derecho para disparar con puntería, o pulsa Autoapuntar para atacar al rival más cercano. Las balas viajan en línea recta y solo cambian de dirección al rebotar contra muros; los estilos no crean parábolas ni abanicos semicirculares. La munición depende de la rareza del estilo. Al quedarte sin balas comienza la recarga automática, que tarda unos segundos; también puedes pulsar R o «Recargar». Gana quien consiga 3 rondas (en salas de 3 o 4 jugadores, la ronda la gana el último tanque en pie). Al terminar la partida te quedas en la sala para jugar otra vez: +150 monedas al ganar, +50 al perder.</p>
 </section>
 
 <section class="panel" id="shop" hidden>
@@ -934,7 +934,7 @@ const RAR=[['Común','#9aa0a6','#111'],['Poco común','#3fae49','#fff'],['Raro',
 function rs(q){if(q===0)return 'background:linear-gradient(135deg,#b9c0ca,#737d8b);color:#101820;border-color:#e0e5eb';if(q===1)return 'background:linear-gradient(135deg,#75e36f,#218c48);color:#071b0b;border-color:#b4ffad';if(q===2)return 'background:linear-gradient(135deg,#76c8ff,#225be8);color:#fff;border-color:#c5e7ff';if(q===3)return 'background:linear-gradient(135deg,#e0a0ff,#7626b5);color:#fff;border-color:#f2d4ff';if(q===4)return 'background:linear-gradient(135deg,#fff2a0,#e3a900);color:#362100;border-color:#fff3bd';if(q===5)return 'background:linear-gradient(135deg,#ff9b9b,#b20e35);color:#fff;border-color:#ffd1d1';if(q===6)return 'background:linear-gradient(90deg,#f33,#fa0,#ee3,#3d3,#3cf,#93f,#f3a,#f33);background-size:200% 100%;animation:rb 3s linear infinite;color:#fff;text-shadow:0 1px 2px #000';if(q===7)return 'background:#05070f;color:#4da3ff;border-color:#2e6bff;box-shadow:0 0 12px #2e6bff';return 'background:'+RAR[q][1]+';color:'+RAR[q][2]}
 const TK=('Clásico,0,3.2,3,2,600,1,0,#3bceac;Rayo,1,5.5,2,2,700,1,0,#ffd23f;Rebote,1,3,7,2,800,1,0,#ee4266;Cañón,2,2.4,2,4,1100,1,0,#b388ff;Trío,2,3.2,3,2,1000,3,.28,#ff9f43;Piedra,0,2.8,2,3,650,1,0,#a0a0a0;Pelota,0,3,4,2,700,1,0,#e0c080;Chispa,0,3.6,2,2,550,1,0,#ffb74d;Bolita,0,3.4,3,1.5,500,1,0,#90caf9;Tuerca,0,2.6,3,3,750,1,0,#bcaaa4;Perdigón,0,3.8,1,2,500,1,0,#cfd8dc;Brote,0,3,3,2,620,1,0,#81c784;Arcilla,0,2.9,3,3,700,1,0,#d7a97b;Ceniza,0,3.3,2,2,560,1,0,#b0bec5;Gota,0,3.1,3,2,580,1,0,#4fc3f7;Plomo,0,2.7,2,3,720,1,0,#78909c;Doble,1,3.4,3,2,900,2,.16,#66bb6a;Ráfaga,1,4,3,2,450,1,0,#26a69a;Pinball,1,3.6,6,2,800,1,0,#ec407a;Dardo,1,6,2,1.5,650,1,0,#9ccc65;Bumerán,1,3,8,2,900,1,0,#ffa726;Metralla,1,3.8,3,2,380,1,0,#8d6e63;Abanico,1,3.2,2,2,950,3,.17,#26c6da;Pesado,1,2.2,3,4,950,1,0,#7e57c2;Mortero,2,2.6,4,4,1000,1,0,#5c6bc0;Cuarteto,2,3.2,3,2,1100,4,.12,#29b6f6;Relámpago,2,6.5,3,2,550,1,0,#fdd835;Rebotón,2,3.4,10,2,850,1,0,#ef5350;Gemelas,2,3.6,4,2.5,800,2,.1,#ab47bc;Escopeta,2,3,2,1.5,1100,5,.12,#ff7043;Taladro,2,4.2,5,3,700,1,0,#8d9db6;Meteoro,3,3.4,4,6,1300,1,0,#ff7043;Cinco,3,3.6,4,2.5,1000,5,.1,#7e57c2;Plasma,3,5,4,2.5,330,1,0,#00e5ff;Caos,3,3.8,12,2,750,1,0,#d500f9;Tormenta,3,4.2,3,2,500,3,.1,#40c4ff;Titán,3,3,5,7,1500,1,0,#6d4c41;Espiral,3,4,6,2.5,650,2,.2,#00bfa5;Dragón,4,4.4,6,5,800,3,.15,#ff6d00;Eclipse,4,5,8,3,600,1,0,#ffd600;Aurora,4,4.6,7,3,420,2,.14,#69f0ae;Colosal,4,3.4,6,9,1400,1,0,#ffab00;Lluvia de plomo,4,4,4,2,260,1,0,#ffd54f;Infierno,5,4.6,8,4,500,5,.12,#ff1744;Supernova,5,5.2,10,6,900,3,.2,#ff5252;Guadaña,5,5.5,12,3,450,2,.18,#d50000;Apocalipsis,5,4.4,9,8,1200,7,.15,#b71c1c;Arcoíris,6,5.2,12,4,380,3,.12,#ff4081;Singularidad,6,6,15,7,800,5,.1,#18ffff;Vacío,7,6.5,20,6,260,5,.08,#2e6bff;Aleatorizador,7,4,6,4,600,1,0,#4da3ff').split(';').map(s=>{const a=s.split(',');return{n:a[0],q:+a[1],bs:+a[2],b:+a[3],r:+a[4],cd:+a[5],k:+a[6],sp:+a[7],c:a[8]}});
 const CH=[
- {n:'Cofre de madera',p:200,c:'#a1662f',w:[4,1,65,23,6,1,.1,.01,.001,.0001],g:[1,2],desc:'Estilos básicos; monedas reducidas'},
+ {n:'Cofre de madera',p:200,c:'#a1662f',w:[3,0.7,67,24,6.4,1.1,.15,.02,.002,.0002],g:[1,2],desc:'Monedas de 200–350; mejores probabilidades de rarezas'},
  {n:'Cofre de hierro',p:1000,c:'#9aa7b8',w:[8,1.5,35,35,15,4,1,.25,.05,.01],g:[1,3],desc:'Más posibilidades de rareza media'},
  {n:'Cofre de oro',p:3000,c:'#ffd23f',w:[10,2,10,25,30,15,6,1.5,.4,.1],g:[2,4],desc:'Mejores rarezas · garantía Épica+'}
 ];
@@ -1007,7 +1007,7 @@ const COS_DUP=[20,30,45,65,90,140,220,350];
 const sleep=ms=>new Promise(r=>setTimeout(r,ms));
 function pick(w){let total=w.reduce((a,b)=>a+b,0);if(!total)return 0;let r=Math.random()*total;for(let i=0;i<w.length;i++){if((r-=w[i])<0)return i}return w.length-1}
 function ofQ(q){const l=TK.map((t,i)=>i).filter(i=>TK[i].q===q);return{t:'s',r:q,id:l[Math.random()*l.length|0]}}
-function rollChest(i){const c=CH[i],k=pick(c.w);if(k===0)return{t:'c',v:Math.round(c.p*(.1+Math.random()*.45))};if(k===1)return{t:'g',v:c.g[0]+(Math.random()*(c.g[1]-c.g[0]+1)|0)};return ofQ(k-2)}
+function rollChest(i){const c=CH[i],k=pick(c.w);if(k===0)return{t:'c',v:i===0?200+(Math.random()*151|0):Math.round(c.p*(.1+Math.random()*.45))};if(k===1)return{t:'g',v:c.g[0]+(Math.random()*(c.g[1]-c.g[0]+1)|0)};return ofQ(k-2)}
 /* Cofre de oro: tras 9 tiradas sin un estilo épico+, la siguiente garantiza uno. */
 function rollGoldChestWithPity(){
  const misses=Math.max(0,Math.min(9,Number(sv.goldPity)||0));
@@ -1078,7 +1078,7 @@ $('#eq').onclick=e=>{e.preventDefault();e.stopPropagation();sv.sel=r.id;save();r
 function odds(i){
  const box=SHOP_BOXES[i];if(!box)return;const v=$('#rv');v.hidden=false;let rows=[];
  if(i<CH.length){const w=box.w,t=w.reduce((a,b)=>a+b,0),pc=x=>{const p=x/t*100;return (p>=1?p.toFixed(1):p>=.1?p.toFixed(2):p.toFixed(3))+'%'};
-   rows.push(`<div class='sc' style='background:#444'><b>Monedas</b><small>${pc(w[0])} · ${Math.round(box.p*.1)}–${Math.round(box.p*.55)}🪙</small></div>`,`<div class='sc' style='background:#444'><b>Gemas</b><small>${pc(w[1])} · ${box.g[0]}–${box.g[1]}💎</small></div>`);
+   rows.push(`<div class='sc' style='background:#444'><b>Monedas</b><small>${pc(w[0])} · ${i===0?'200–350':Math.round(box.p*.1)+'–'+Math.round(box.p*.55)}🪙</small></div>`,`<div class='sc' style='background:#444'><b>Gemas</b><small>${pc(w[1])} · ${box.g[0]}–${box.g[1]}💎</small></div>`);
    RAR.forEach((r,q)=>rows.push(`<div class='sc' style='${rs(q)}'><b>${r[0]}</b><small>${pc(w[q+2])} · ${TK.filter(s=>s.q===q).length} estilos</small></div>`));
  }else if(box.kind==='gem'){
    RAR.forEach((r,q)=>rows.push(`<div class='sc' style='${rs(q)}'><b>${r[0]}</b><small>Probabilidad según los estilos que te falten</small></div>`));
@@ -1268,17 +1268,15 @@ function tg(b){if(!b.own)return G.alive&&!hiddenByBush(G.map,G,{x:b.x,y:b.y})?{x
 function wl(b,m,x,y){if(!wall(m,x,y))return false;if(((b.fx===7&&b.age<35)||(b.gh&&b.age<b.gh))&&x>8&&y>8&&x<N*T-8&&y<N*T-8)return false;spark(x,y,b.c);return true}
 function fxb(b,f){
 const e=b.fx;if(b.md===1&&b.age%3<f)spark(b.x,b.y,b.c);
-if(b.pb!==b.b){b.pb=b.b;if(b.md===5){b.vx*=.76;b.vy*=.76}if(e===2){b.vx*=1.07;b.vy*=1.07}if(e===3&&!b.ch){const a=Math.atan2(b.vy,b.vx),v=Math.hypot(b.vx,b.vy)*.86;[-.5,.5].forEach(d=>G.bl.push({...b,vx:Math.cos(a+d)*v,vy:Math.sin(a+d)*v,ch:1,b:1,pb:1,age:25,r:Math.max(1.2,b.r*.82)}))}}
-const v=Math.hypot(b.vx,b.vy),a=Math.atan2(b.vy,b.vx);let na=a;
-/* La habilidad Disparo dirigido corrige suavemente la trayectoria hacia el rival. */
-if(e===1){const target=tg(b);if(target){const want=Math.atan2(target.y-b.y,target.x-b.x),delta=Math.atan2(Math.sin(want-a),Math.cos(want-a));na=a+Math.max(-.019*f,Math.min(.019*f,delta));}}
-if(e===4)na=a+Math.sin(b.age*.3)*.065*f;
-if(na!==a){b.vx=Math.cos(na)*v;b.vy=Math.sin(na)*v}
+/* Los estilos conservan sus efectos visuales, pero las balas no curvan, persiguen ni giran.
+   La única modificación de dirección permitida es el rebote físico contra los muros. */
+if(b.pb!==b.b){b.pb=b.b;if(b.md===5){b.vx*=.76;b.vy*=.76}if(e===2){b.vx*=1.07;b.vy*=1.07}}
+const v=Math.hypot(b.vx,b.vy),a=Math.atan2(b.vy,b.vx);
 if(e===6)b.r=Math.min((b.r0||2)*1.5,b.r+.006*f);
-if(e===8&&b.age>70&&!b.rv){b.rv=1;b.vx=-b.vx;b.vy=-b.vy}
 if(e===9){b.s0=b.s0||v;if(v<b.s0*1.5){b.vx*=1+.005*f;b.vy*=1+.005*f}}
-if(e>9)fxn(b,f,v,a)}
-function fxEnd(b){const nx=b.fx>9?NX[b.fx-10]:null;if(nx&&nx[0]===4&&!b.ch){const n=2,sp=Math.max(1.4,Math.min(2.6,nx[2]*.82));for(let i=0;i<n;i++){const a=i*Math.PI*2/n;G.bl.push({...b,vx:Math.cos(a)*sp,vy:Math.sin(a)*sp,b:1,pb:1,age:40,ch:1,fx:0,r:Math.max(1.3,b.r*.52)})}}if((b.fx===5||b.fx===11)&&!b.ch){const n=4,sp=b.fx===5?2.1:1.9;spark(b.x,b.y,b.c);for(let i=0;i<n;i++){const a=i*Math.PI*2/n;G.bl.push({...b,vx:Math.cos(a)*sp,vy:Math.sin(a)*sp,b:1,pb:1,age:40,ch:1,fx:0,r:Math.max(1.2,b.r*.48),sh:(b.sh+8)%SHN.length})}}}
+if(e>9)fxn(b,f,v,a);
+}
+function fxEnd(b){if(b&&(b.fx===5||b.fx===11||(b.fx>9&&NX[b.fx-10]&&NX[b.fx-10][0]===4)))spark(b.x,b.y,b.c);}
 /* ===== Gráficos realistas ===== */
 const PERF_MOBILE=!!(window.matchMedia&&window.matchMedia('(pointer:coarse), (max-width:760px)').matches);
 const _pc=new Map();
@@ -1540,33 +1538,23 @@ while(NX.length<TK.length-10)NX.push([0,.018,.45]);
 // Reduce los efectos con división/fragmentación para que un disparo no se convierta en decenas de balas.
 NX.forEach(v=>{if(v[0]===3)v[1]=Math.min(v[1],2);if(v[0]===4)v[1]=Math.min(v[1],3);if(v[0]===11)v[2]=Math.min(v[2],3);if(v[0]===12)v[1]=Math.min(v[1],.3);if(v[0]===10)v[1]=Math.min(v[1],.45);if(v[0]===1)v[1]=Math.min(v[1],.05)});
 function fxn(b,f,v,a){
-const [k,p,q]=NX[b.fx-10];b.s0=b.s0||v;
-if(b.pn===undefined)b.pn=b.b;const bn=b.pn!==b.b;b.pn=b.b;
-let na=a;
-if(k===0)na=a+Math.sin(b.age*q)*p*.8*f;
-else if(k===1){ /* Sin balas perseguidoras: no modifica el ángulo hacia el rival. */ }
-else if(k===2){if(v<b.s0*q){b.vx*=1+p*.7*f;b.vy*=1+p*.7*f}}
-else if(k===3){if(bn&&!b.ch)for(let i=0;i<Math.min(2,p);i++){const count=Math.min(2,p),d=(i-(count-1)/2)*q;G.bl.push({...b,vx:Math.cos(a+d)*v*.86,vy:Math.sin(a+d)*v*.86,ch:1,b:1,pb:1,pn:1,age:25,r:Math.max(1.2,b.r*.82)})}}
-else if(k===5)b.r=Math.min((b.r0||2)*Math.min(1.45,q),b.r+p*.7*f);
-else if(k===6){if(b.age>p&&!b.rv){b.rv=1;b.vx=-b.vx;b.vy=-b.vy}}
-else if(k===7)b.gh=p;
-else if(k===8)na=a+p*q*.75*f;
-else if(k===9){if(v>b.s0*p){b.vx*=1-q*.75*f;b.vy*=1-q*.75*f}}
-else if(k===10){if(Math.floor(b.age)%q<f)na=a+(Math.random()-.5)*p*.75}
-else if(k===11){if(b.age>p&&!b.ch&&!b.ts){b.ts=1;const count=Math.max(1,Math.min(2,q));for(let i=0;i<count;i++){const d=(i-(count-1)/2)*.4;G.bl.push({...b,vx:Math.cos(a+d)*v*.86,vy:Math.sin(a+d)*v*.86,ch:1,b:1,pb:1,pn:1,age:b.age,r:Math.max(1.2,b.r*.82)})}}}
-else if(k===12){const s=b.s0*(1+p*.7*Math.sin(b.age*q))/(v||1);b.vx*=s;b.vy*=s}
+const cfg=NX[b.fx-10]||[0,0,0],k=cfg[0],p=cfg[1],q=cfg[2];b.s0=b.s0||v;
+if(b.pn===undefined)b.pn=b.b;b.pn=b.b;
+/* Ninguna habilidad de estilo altera el ángulo ni genera balas hijas en abanico.
+   Las mejoras de velocidad, tamaño, rastro y paso fantasma siguen funcionando. */
+if(k===2){if(v<b.s0*(q||1.8)){b.vx*=1+(p||0)*.7*f;b.vy*=1+(p||0)*.7*f}}
+else if(k===5)b.r=Math.min((b.r0||2)*Math.min(1.45,q||1.3),b.r+(p||0)*.7*f);
+else if(k===7)b.gh=p||0;
+else if(k===9){if(v>b.s0*(p||1.25)){b.vx*=1-(q||0)*.75*f;b.vy*=1-(q||0)*.75*f}}
+else if(k===12){const s=b.s0*(1+(p||0)*.7*Math.sin(b.age*(q||0)))/(v||1);b.vx*=s;b.vy*=s}
 if(b.fx>=51){
  const nm=b._fxName||(b._fxName=(FXN[b.fx]||'').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,''));
- if(/arco electrico|rayo fantasma|disparo dirigido|pulso de plasma/.test(nm)){const target=tg(b);if(target){const want=Math.atan2(target.y-b.y,target.x-b.x),dd=Math.atan2(Math.sin(want-a),Math.cos(want-a));na=a+Math.max(-.013*f,Math.min(.013*f,dd));}}
- if(/zigzag|caos|erratic|finta|vibracion|curva|deriva|giro|espiral|orbita|danza|ciclon|tornado|pulso ondulante/.test(nm))na=a+Math.sin(b.age*.16+(b.sh||0))*.025*f;
  if(/aceler|impulso|veloz|relampago|punta|dinamo|centella|rayo/.test(nm)&&v<b.s0*1.35){b.vx*=1+.0015*f;b.vy*=1+.0015*f;}
  if(/crece|gota gorda|titan|colosal|onda grande|pulso de plasma/.test(nm))b.r=Math.min((b.r0||2)*1.35,b.r+.002*f);
  if(/fantasma|espectral|fase|vacio|eclipse/.test(nm))b.gh=Math.max(b.gh||0,45);
- if(/explos|semilla|supernova|apocalipsis|fragmento|meteoro|racimo|llovizna|rafaga|dispersa|metralla|se abre|pulso de jade/.test(nm)&&b.age>38&&!b.namedSplit&&!b.ch){b.namedSplit=1;const count=2,speed=Math.max(1.5,Math.min(2.3,v*.55));for(let i=0;i<count;i++){const ang=a+(i?1:-1)*(.22+(b.sh%4)*.045);G.bl.push({...b,vx:Math.cos(ang)*speed,vy:Math.sin(ang)*speed,b:1,pb:1,pn:1,age:b.age,ch:1,fx:0,r:Math.max(1.2,b.r*.52),sh:(b.sh+13+i)%SHN.length});}}
- if(/bumeran|vuelve|retorno|eco/.test(nm)&&b.age>48&&!b.namedReturn){b.namedReturn=1;b.vx=-b.vx;b.vy=-b.vy;}
  if(/rastro|eco|chisp|solar|aurora|coral|jade|cian|violeta|glacial|lunar/.test(nm)&&b.age%7<f)spark(b.x,b.y,b.c);
 }
-if(na!==a){b.vx=Math.cos(na)*v;b.vy=Math.sin(na)*v}}
+}
 /* Formas de bala */
 function shell(c,x,y,w,h,on,col){
   c.save();if(!on)c.globalAlpha*=.3;
@@ -2877,7 +2865,7 @@ function spawnShot(o,own,ds){
   flash(o.x+Math.cos(o.a)*10,o.y+Math.sin(o.a)*10,o.a,t.c);
   // Cada disparo respeta las estadísticas reales del estilo: ningún bot recibe x2.
   const count=Math.max(1,Math.min(4,Math.round(t.k||1)));
-  const spread=Math.max(0,Math.min(.2,t.sp||0));
+  const spread=Math.max(0,Math.min(.025,t.sp||0));
   const angles=count>1?Array.from({length:count},(_,i)=>(i-(count-1)/2)*spread):[0];
   const speed=Math.max(1.6,t.bs||3.2),radius=Math.max(1.2,Math.min(4.2,t.r||2)),bounces=Math.max(1,Math.min(7,t.b||1));
   const botShot=!!(G&&G.bot&&!own);
@@ -3150,9 +3138,9 @@ let t0=performance.now(),lastPaint=0;
       c.fillStyle='#283952';rounded(-15,-14,30,28,7);c.fill();c.fillStyle='#dffaff';c.beginPath();c.arc(0,0,6,0,TAU);c.fill();c.restore();
       /* Blanco / rival. */
       c.save();c.translate(552,182);c.fillStyle='#111a2a';rounded(-34,-20,68,40,8);c.fill();c.fillStyle='#ff4f88';rounded(-24,-15,48,30,7);c.fill();c.fillStyle='#ffdbec';c.beginPath();c.arc(0,0,5,0,TAU);c.fill();c.restore();
-      const travel=(p*1.7)%1,x=158+travel*350,y=182+Math.sin(travel*TAU*(t.fx%5+1))*(t.fx===4?18:3);c.save();c.globalCompositeOperation='lighter';
+      const travel=(p*1.7)%1,x=158+travel*350,y=182;c.save();c.globalCompositeOperation='lighter';
       for(let j=5;j>0;j--){c.globalAlpha=.08+j*.035;c.strokeStyle=j%2?'#ffffff':t.c;c.lineWidth=1+j*.55;c.beginPath();c.moveTo(x-j*(3+t.bs*.7),y);c.lineTo(x-j*(2+t.bs*.7),y);c.stroke()}
-      if(t.k>1){for(let j=0;j<t.k;j++){const offset=(j-(t.k-1)/2)*Math.min(18,5+t.sp*50);c.globalAlpha=.78;c.fillStyle=t.c;c.beginPath();c.arc(x,y+offset,Math.max(2,t.r*.8),0,TAU);c.fill()}}
+      if(t.k>1){const count=Math.max(1,Math.min(4,Math.round(t.k||1))),previewSpread=Math.max(0,Math.min(.025,t.sp||0));for(let j=0;j<count;j++){const offset=Math.tan((j-(count-1)/2)*previewSpread)*350*travel;c.globalAlpha=.78;c.fillStyle=t.c;c.beginPath();c.arc(x,y+offset,Math.max(2,t.r*.8),0,TAU);c.fill()}}
       c.globalAlpha=1;c.translate(x,y);c.rotate(now/230);c.fillStyle=t.c;c.strokeStyle='#ffffff';c.lineWidth=1.8;
       const shape=t.sh%10,rad=Math.max(4,Math.min(11,t.r*2.4));c.beginPath();
       if(shape===1){c.arc(0,0,rad,0,TAU)}else if(shape===2){c.moveTo(0,-rad);c.lineTo(rad,0);c.lineTo(0,rad);c.lineTo(-rad,0);c.closePath()}else if(shape===3||shape===4){for(let a=0;a<4;a++){const an=a*Math.PI/2;c.moveTo(Math.cos(an)*rad*.25,Math.sin(an)*rad*.25);c.lineTo(Math.cos(an)*rad,Math.sin(an)*rad)}}else if(shape===5){for(let a=0;a<3;a++){const an=-Math.PI/2+a*TAU/3;a===0?c.moveTo(Math.cos(an)*rad,Math.sin(an)*rad):c.lineTo(Math.cos(an)*rad,Math.sin(an)*rad)}c.closePath()}else if(shape===6){c.arc(0,0,rad,0,TAU);c.arc(0,0,rad*.45,0,TAU,true)}else if(shape===7){c.rect(-rad,-rad*.35,rad*2,rad*.7)}else if(shape===8){for(let a=0;a<10;a++){const an=-Math.PI/2+a*Math.PI/5,r0=a%2?rad*.42:rad;c.lineTo(Math.cos(an)*r0,Math.sin(an)*r0)}}else if(shape===9){for(let a=0;a<12;a++){const an=a*TAU/12,r0=a%3===0?rad*.5:rad;c.lineTo(Math.cos(an)*r0,Math.sin(an)*r0)}}else{c.rect(-rad*.75,-rad*.75,rad*1.5,rad*1.5)}c.fill();c.stroke();c.restore();
@@ -4288,6 +4276,225 @@ body.game-screen-active #game:fullscreen>.wrap{width:calc(100vw - 16px);height:c
 </script>
 <script>
 /* Los muros son indestructibles: no se modifica el mapa al recibir impactos. */
+</script>
+<script>
+/* Game Verse Brawl: nuevas identidades y habilidades reales para Común, Poco común y Raro. */
+(function(){
+  if (window.__GV_STYLE_REWORK_V1__ || !Array.isArray(TK) || typeof spawnShot !== 'function') return;
+  window.__GV_STYLE_REWORK_V1__ = true;
+
+  const newNames = {
+    0: [
+      'Núcleo Denso','Motor Reactivo','Fase de Cobre',
+      'Bala Maciza','Carga de Bronce','Paso de Latón',
+      'Ancla Cinética','Rebote de Chispa','Velo Gris',
+      'Masa Compacta','Reactor Menor','Paso de Granito',
+      'Núcleo de Plomo','Impulso de Cuarzo','Fase de Acero',
+      'Corazón Denso','Salto de Bronce'
+    ],
+    1: [
+      'Cortapulsos','Rebote Reactor','Turbo Esmeralda',
+      'Pulso Deflector','Ricochet Verde','Sobremarcha Jade',
+      'Cazaproyectiles','Rebote de Cian','Acelerador Coral',
+      'Interferencia Viva','Reactor de Rebote','Marcha Neón',
+      'Barrera Cinética','Salto de Jade','Turbo de Ónix'
+    ],
+    2: [
+      'Perforador Azul','Carga Sísmica','Núcleo Creciente',
+      'Lanza-Muros','Impacto Reactivo','Masa Ascendente',
+      'Fase Profunda','Rebote de Plasma','Núcleo Expandido',
+      'Perforador Cobalto','Cráter Cinético','Coloso Creciente',
+      'Fase Índigo','Reactor Azur'
+    ]
+  };
+  const skillsByRarity = {
+    0: ['amortiguador','impulso','fase'],
+    1: ['interceptor','rebotePlus','turbo'],
+    2: ['perforador','carga','crecimiento']
+  };
+  const ability = {
+    amortiguador: {
+      label:'Masa creciente',
+      desc:'Empieza compacto y aumenta hasta un 45 % de tamaño durante el vuelo.'
+    },
+    impulso: {
+      label:'Impulso de rebote',
+      desc:'Al golpear un muro, acelera y conserva una carga de rebote hasta dos veces.'
+    },
+    fase: {
+      label:'Fase breve',
+      desc:'Atraviesa los muros interiores durante los primeros 18 cuadros.'
+    },
+    interceptor: {
+      label:'Intercepción',
+      desc:'Puede neutralizar una bala rival cuando ambos proyectiles se cruzan.'
+    },
+    rebotePlus: {
+      label:'Rebote cargado',
+      desc:'Sus dos primeros choques contra muros recargan un rebote y le dan un pequeño impulso.'
+    },
+    turbo: {
+      label:'Sobremarcha',
+      desc:'Acelera progresivamente durante el vuelo, hasta un 32 % más de velocidad.'
+    },
+    perforador: {
+      label:'Perforación prolongada',
+      desc:'Atraviesa los muros interiores durante los primeros 52 cuadros.'
+    },
+    carga: {
+      label:'Carga sísmica',
+      desc:'Los choques contra muros aumentan su tamaño y velocidad, hasta dos cargas.'
+    },
+    crecimiento: {
+      label:'Núcleo creciente',
+      desc:'Aumenta hasta un 75 % de radio durante el vuelo para cubrir más espacio.'
+    }
+  };
+  const skillKeys = Object.keys(ability);
+  const descOffset = MDN.length;
+  MDN.push(...skillKeys.map(k => ability[k].desc));
+
+  const ordinal = {0:0,1:0,2:0};
+  TK.forEach((t, index) => {
+    if (!Object.prototype.hasOwnProperty.call(newNames, t.q)) return;
+    const q = t.q;
+    const n = ordinal[q]++;
+    const names = newNames[q];
+    const skills = skillsByRarity[q];
+    if (n >= names.length) return;
+    const skill = skills[n % skills.length];
+    const def = ability[skill];
+
+    // Conserva el ID de inventario de cada estilo para no desordenar perfiles guardados.
+    t.n = names[n];
+    t.gvAbility = skill;
+    t.gvAbilityName = def.label;
+    t.gvAbilityDesc = def.desc;
+    t.abilityName = def.label;
+    t.abilityDesc = def.label + ' · ' + def.desc;
+
+    // Cada habilidad obtiene un identificador interno propio; el disparo real se neutraliza
+    // en spawnShot y usa gvAbility, sin curvas, semicírculos ni persecución automática.
+    t.fx = 100 + index;
+    FXN[t.fx] = def.label;
+    t.md = descOffset + skillKeys.indexOf(skill);
+
+    // Ajustes ligeros para que las nuevas mecánicas no disparen demasiado la dificultad.
+    if (skill === 'amortiguador') { t.bs *= .94; t.r *= .90; }
+    else if (skill === 'impulso') { t.bs *= .97; }
+    else if (skill === 'fase') { t.bs *= .97; }
+    else if (skill === 'interceptor') { t.bs *= .96; }
+    else if (skill === 'rebotePlus') { t.bs *= .96; }
+    else if (skill === 'turbo') { t.bs *= .90; }
+    else if (skill === 'perforador') { t.bs *= .93; }
+    else if (skill === 'carga') { t.bs *= .94; t.r *= .90; }
+    else if (skill === 'crecimiento') { t.bs *= .92; t.r *= .80; }
+  });
+
+  const originalSpawnShot = spawnShot;
+  spawnShot = function(o, own, ds) {
+    const start = G && Array.isArray(G.bl) ? G.bl.length : 0;
+    originalSpawnShot(o, own, ds);
+    if (!G || !Array.isArray(G.bl)) return;
+    const idx = Number.isInteger(o && o.t) ? o.t : 0;
+    const t = TK[idx] || TK[0];
+    if (!t || !t.gvAbility) return;
+    for (let i = start; i < G.bl.length; i++) {
+      const b = G.bl[i];
+      b.gvAbility = t.gvAbility;
+      b.gvAbilityName = t.gvAbilityName;
+      b.gvAbilityTier = t.q;
+      b.gvBaseR = Number(b.r) || Number(t.r) || 2;
+      b.gvBaseSpeed = Math.max(0.1, Math.hypot(b.vx || 0, b.vy || 0));
+      b.gvCharges = 0;
+      b.gvPhaseDuration = t.q === 2 ? 52 : 18;
+      // No arrastra las habilidades antiguas de este ID ni altera su trayectoria de disparo recta.
+      b.fx = 0;
+      b.md = 0;
+      b.gh = 0;
+    }
+  };
+
+  const originalWallCheck = wl;
+  wl = function(b, m, x, y) {
+    if (b && b.gvAbility && (b.gvAbility === 'fase' || b.gvAbility === 'perforador')) {
+      const duration = Number(b.gvPhaseDuration) || (b.gvAbility === 'perforador' ? 52 : 18);
+      const insideArena = x > 8 && y > 8 && x < N*T-8 && y < N*T-8;
+      if (insideArena && b.age < duration && wall(m, x, y)) return false;
+    }
+    const hit = originalWallCheck(b, m, x, y);
+    if (!hit || !b || !b.gvAbility) return hit;
+
+    if (b.gvAbility === 'impulso' && b.gvCharges < 2) {
+      b.gvCharges++;
+      b.b = Math.min(8, (Number(b.b) || 0) + 1);
+      b.vx *= 1.10; b.vy *= 1.10;
+      spark(b.x, b.y, b.c);
+    } else if (b.gvAbility === 'rebotePlus' && b.gvCharges < 2) {
+      b.gvCharges++;
+      b.b = Math.min(8, (Number(b.b) || 0) + 1);
+      b.vx *= 1.055; b.vy *= 1.055;
+    } else if (b.gvAbility === 'carga' && b.gvCharges < 2) {
+      b.gvCharges++;
+      b.b = Math.min(8, (Number(b.b) || 0) + 1);
+      b.r = Math.min((b.gvBaseR || b.r) * 1.34, (Number(b.r) || 1.5) * 1.13);
+      b.vx *= 1.08; b.vy *= 1.08;
+      spark(b.x, b.y, b.c);
+    }
+    return hit;
+  };
+
+  const originalBulletFx = fxb;
+  fxb = function(b, f) {
+    originalBulletFx(b, f);
+    if (!b || !b.gvAbility) return;
+    const age = Math.max(0, Number(b.age) || 0);
+    const progress = Math.min(1, age / 120);
+    const current = Math.hypot(b.vx || 0, b.vy || 0);
+    const setSpeed = target => {
+      if (current > .05 && Number.isFinite(target)) {
+        const ratio = target / current;
+        b.vx *= ratio; b.vy *= ratio;
+      }
+    };
+
+    if (b.gvAbility === 'amortiguador') {
+      b.r = Math.min((b.gvBaseR || 2) * 1.45, (b.gvBaseR || 2) * (1 + .45 * progress));
+    } else if (b.gvAbility === 'turbo') {
+      setSpeed((b.gvBaseSpeed || 3) * (1 + .32 * progress));
+    } else if (b.gvAbility === 'crecimiento') {
+      b.r = Math.min((b.gvBaseR || 2) * 1.75, (b.gvBaseR || 2) * (1 + .75 * progress));
+    }
+  };
+
+  // Intercepción entre proyectiles: elimina ambas balas al cruzarse, antes de que una alcance al tanque.
+  const originalStep = step;
+  step = function(f) {
+    if (G && Array.isArray(G.bl) && G.bl.length > 1 && G.bl.some(b => b && b.gvAbility === 'interceptor')) {
+      const removed = new Set();
+      for (let i = G.bl.length - 1; i >= 0; i--) {
+        const a = G.bl[i];
+        if (!a || removed.has(i)) continue;
+        for (let j = i - 1; j >= 0; j--) {
+          const b = G.bl[j];
+          if (!b || removed.has(j) || !!a.own === !!b.own) continue;
+          if (a.gvAbility !== 'interceptor' && b.gvAbility !== 'interceptor') continue;
+          const reach = (Number(a.r) || 2) + (Number(b.r) || 2) + Math.max(2, (Math.hypot(a.vx||0,a.vy||0) + Math.hypot(b.vx||0,b.vy||0)) * .32);
+          if (Math.hypot(a.x - b.x, a.y - b.y) <= reach) {
+            removed.add(i); removed.add(j);
+            spark((a.x+b.x)/2, (a.y+b.y)/2, a.gvAbility === 'interceptor' ? a.c : b.c);
+            break;
+          }
+        }
+      }
+      Array.from(removed).sort((a,b)=>b-a).forEach(i=>G.bl.splice(i,1));
+    }
+    return originalStep(f);
+  };
+
+  console.info('Game Verse: estilos Común, Poco común y Raro renovados con nueve habilidades nuevas.');
+})();
+
 </script>
 </body>
 </html>
