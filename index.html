@@ -1280,6 +1280,7 @@ if(e===9){b.s0=b.s0||v;if(v<b.s0*1.5){b.vx*=1+.005*f;b.vy*=1+.005*f}}
 if(e>9)fxn(b,f,v,a)}
 function fxEnd(b){const nx=b.fx>9?NX[b.fx-10]:null;if(nx&&nx[0]===4&&!b.ch){const n=2,sp=Math.max(1.4,Math.min(2.6,nx[2]*.82));for(let i=0;i<n;i++){const a=i*Math.PI*2/n;G.bl.push({...b,vx:Math.cos(a)*sp,vy:Math.sin(a)*sp,b:1,pb:1,age:40,ch:1,fx:0,r:Math.max(1.3,b.r*.52)})}}if((b.fx===5||b.fx===11)&&!b.ch){const n=4,sp=b.fx===5?2.1:1.9;spark(b.x,b.y,b.c);for(let i=0;i<n;i++){const a=i*Math.PI*2/n;G.bl.push({...b,vx:Math.cos(a)*sp,vy:Math.sin(a)*sp,b:1,pb:1,age:40,ch:1,fx:0,r:Math.max(1.2,b.r*.48),sh:(b.sh+8)%SHN.length})}}}
 /* ===== Gráficos realistas ===== */
+const PERF_MOBILE=!!(window.matchMedia&&window.matchMedia('(pointer:coarse), (max-width:760px)').matches);
 const _pc=new Map();
 function pc(c){let v=_pc.get(c);if(v)return v;const m=/^#?([0-9a-f]{3}|[0-9a-f]{6})$/i.exec(c||'');if(!m)v=[160,160,160];else{let h=m[1];if(h.length===3)h=h.split('').map(x=>x+x).join('');v=[parseInt(h.slice(0,2),16),parseInt(h.slice(2,4),16),parseInt(h.slice(4,6),16)]}_pc.set(c,v);return v}
 const rgba=(c,a)=>{const v=pc(c);return 'rgba('+v[0]+','+v[1]+','+v[2]+','+a+')'};
@@ -1289,7 +1290,9 @@ const shade=(c,t)=>t>=0?mixc(c,'#ffffff',t):mixc(c,'#000000',-t);
 function rr(c,x,y,w,h,r){r=Math.min(r,w/2,h/2);c.beginPath();c.moveTo(x+r,y);c.lineTo(x+w-r,y);c.quadraticCurveTo(x+w,y,x+w,y+r);c.lineTo(x+w,y+h-r);c.quadraticCurveTo(x+w,y+h,x+w-r,y+h);c.lineTo(x+r,y+h);c.quadraticCurveTo(x,y+h,x,y+h-r);c.lineTo(x,y+r);c.quadraticCurveTo(x,y,x+r,y);c.closePath()}
 let SHK=0;
 const PT=[];
-const pp=o=>{if(PT.length<420)PT.push(o)};
+// Menos partículas simultáneas evita picos de renderizado en móviles y mantiene los efectos visibles.
+const PT_LIMIT=PERF_MOBILE?180:340;
+const pp=o=>{if(PT.length<PT_LIMIT)PT.push(o)};
 const rr_=(a,b)=>a+Math.random()*(b-a);
 function boom(x,y,c,styleId=-1){
  const ex=Number.isInteger(styleId)&&styleId>=0?EXPLOSIONS[styleId]:null,ec=ex?ex.c:c,mode=ex?((ex.basePattern??ex.pattern)%20):0,rare=ex?ex.q:0,variant=ex?styleId:0,TAU=Math.PI*2;
@@ -1388,8 +1391,9 @@ function flash(x,y,a,c){
 function dust(x,y){pp({t:'dust',x:x+rr_(-2,2),y:y+rr_(-2,2),vx:rr_(-.12,.12),vy:rr_(-.12,.12),l:26,l0:26,s:1.8})}
 function smoke(x,y){pp({t:'smoke',x:x+rr_(-2,2),y:y+rr_(-2,2),vx:rr_(-.08,.08),vy:-.12,l:70,l0:70,s:rr_(2.5,4)})}
 function parts(){
+  const frameNow=performance.now();
   for(let i=PT.length-1;i>=0;i--){
-    const p=PT[i];if(p.rainbow)p.c=hueHex((performance.now()/19+(p.h||0))%360,.93,.59);p.x+=p.vx;p.y+=p.vy;
+    const p=PT[i];if(p.rainbow)p.c=hueHex((frameNow/19+(p.h||0))%360,.93,.59);p.x+=p.vx;p.y+=p.vy;
     if(--p.l<=0){PT.splice(i,1);continue}
     const k=p.l/p.l0;
     if(p.t==='spark'){p.vx*=.93;p.vy*=.93;cx.globalCompositeOperation='lighter';cx.strokeStyle=rgba(p.c,k);cx.lineWidth=.7;cx.lineCap='round';cx.beginPath();cx.moveTo(p.x,p.y);cx.lineTo(p.x-p.vx*2.2,p.y-p.vy*2.2);cx.stroke();cx.globalCompositeOperation='source-over'}
@@ -1552,7 +1556,7 @@ else if(k===10){if(Math.floor(b.age)%q<f)na=a+(Math.random()-.5)*p*.75}
 else if(k===11){if(b.age>p&&!b.ch&&!b.ts){b.ts=1;const count=Math.max(1,Math.min(2,q));for(let i=0;i<count;i++){const d=(i-(count-1)/2)*.4;G.bl.push({...b,vx:Math.cos(a+d)*v*.86,vy:Math.sin(a+d)*v*.86,ch:1,b:1,pb:1,pn:1,age:b.age,r:Math.max(1.2,b.r*.82)})}}}
 else if(k===12){const s=b.s0*(1+p*.7*Math.sin(b.age*q))/(v||1);b.vx*=s;b.vy*=s}
 if(b.fx>=51){
- const nm=(FXN[b.fx]||'').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'');
+ const nm=b._fxName||(b._fxName=(FXN[b.fx]||'').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,''));
  if(/arco electrico|rayo fantasma|disparo dirigido|pulso de plasma/.test(nm)){const target=tg(b);if(target){const want=Math.atan2(target.y-b.y,target.x-b.x),dd=Math.atan2(Math.sin(want-a),Math.cos(want-a));na=a+Math.max(-.013*f,Math.min(.013*f,dd));}}
  if(/zigzag|caos|erratic|finta|vibracion|curva|deriva|giro|espiral|orbita|danza|ciclon|tornado|pulso ondulante/.test(nm))na=a+Math.sin(b.age*.16+(b.sh||0))*.025*f;
  if(/aceler|impulso|veloz|relampago|punta|dinamo|centella|rayo/.test(nm)&&v<b.s0*1.35){b.vx*=1+.0015*f;b.vy*=1+.0015*f;}
@@ -2717,7 +2721,7 @@ function botStep(f,now){
  }
  if(!(now<B.sFlip)){B.sSign=Math.random()<.5?-1:1;B.sFlip=now+500+Math.random()*900}
  // ---- Elección de movimiento: 16 direcciones + quieto, puntuadas con peligro futuro ----
- const S=Math.ceil(C.look/2),ts=2,spd=C.sp;
+ const S=Math.ceil(C.look/2),ts=2,spd=.85; // Misma velocidad base que el jugador (.85 por fotograma).
  if(!(now<B.decAt)){
   const xs=new Float32Array(S+1),ys=new Float32Array(S+1),wd0=Math.hypot(B.tx-p.x,B.ty-p.y),reached=wd0<7;
   const wDanger=5*C.dw*(1+.5*pressure),ideal=C.ideal*(1+.22*pressure-.18*camp),tnx=-dy0/dist,tny=dx0/dist;
@@ -2807,18 +2811,33 @@ function updateBushTransitions(now){
   track('player',G,G.bot?(TK[sv.sel]||TK[0]).c:SC[G.slot]);
   for(const o of Object.values(G.ops))if(o.al)track('p'+o.id,o,SC[o.slot]);
 }
+let lastBushWindPaint=0,bushWindMap=null,bushWindCache=[];
 function drawBushWind(m,now){
   if(!m||!m.bushes)return;
-  cx.save();
-  for(const p of m.bushes){
-    // Hojas pequeñas movidas por una brisa; la capa se pinta en tiempo real aunque el suelo esté cacheado.
-    for(let i=0;i<5;i++){
-      const phase=now*.00125+p.id*1.73+i*2.11;
-      const fx=((i*37+p.id*13)%97)/97,fy=((i*61+p.id*19)%89)/89;
-      const x=p.x+fx*p.w+Math.sin(phase)*1.8,y=p.y+fy*p.h+Math.cos(phase*.83)*1.15;
-      cx.save();cx.translate(x,y);cx.rotate(Math.sin(phase)*.45);cx.globalAlpha=.12+.08*(.5+.5*Math.sin(phase*1.7));
-      cx.fillStyle=i%2?'#b2e879':'#6dbc57';cx.beginPath();cx.ellipse(0,0,1.9,.72,0,0,Math.PI*2);cx.fill();cx.restore();
+  // Recalcula las posiciones con menor frecuencia, pero dibuja la última capa en cada fotograma
+  // para evitar que las hojas parpadeen cuando se vuelve a pintar el lienzo completo.
+  const windInterval=PERF_MOBILE?55:32;
+  if(m!==bushWindMap||now-lastBushWindPaint>=windInterval){
+    lastBushWindPaint=now;bushWindMap=m;bushWindCache=[];
+    const leafCount=PERF_MOBILE?2:5;
+    for(const p of m.bushes){
+      for(let i=0;i<leafCount;i++){
+        const phase=now*.00125+p.id*1.73+i*2.11;
+        const fx=((i*37+p.id*13)%97)/97,fy=((i*61+p.id*19)%89)/89;
+        bushWindCache.push({
+          x:p.x+fx*p.w+Math.sin(phase)*1.8,
+          y:p.y+fy*p.h+Math.cos(phase*.83)*1.15,
+          a:Math.sin(phase)*.45,
+          alpha:.12+.08*(.5+.5*Math.sin(phase*1.7)),
+          color:i%2?'#b2e879':'#6dbc57'
+        });
+      }
     }
+  }
+  cx.save();
+  for(const leaf of bushWindCache){
+    cx.save();cx.translate(leaf.x,leaf.y);cx.rotate(leaf.a);cx.globalAlpha=leaf.alpha;
+    cx.fillStyle=leaf.color;cx.beginPath();cx.ellipse(0,0,1.9,.72,0,0,Math.PI*2);cx.fill();cx.restore();
   }
   cx.restore();
 }
@@ -2939,11 +2958,10 @@ function crosshair(){
 let t0=performance.now(),lastPaint=0;
 (function loop(t){
   requestAnimationFrame(loop);
-  const mobile=!!(window.matchMedia&&window.matchMedia('(pointer:coarse), (max-width:760px)').matches);
   const interval=1000/60;
   if(lastPaint&&t-lastPaint<interval)return;
   const elapsed=lastPaint?Math.min(48,t-lastPaint):16.667;lastPaint=t;t0=t;
-  const f=Math.min(2.5,elapsed/16.667);
+  const f=Math.min(PERF_MOBILE?2.5:2,elapsed/16.667);
   if(G&&G.started&&G.map&&g)step(f);
   if(G&&G.map)render();
 })(t0);
@@ -4252,54 +4270,7 @@ body.game-screen-active #game:fullscreen>.wrap{width:calc(100vw - 16px);height:c
 
 </script>
 <script>
-/* Muros rompibles: única mecánica conservada de la actualización Ultimate. */
-(function(){
-  'use strict';
-  if(typeof G==='undefined'||typeof wl!=='function'||typeof wall!=='function') return;
-  const blocks=new WeakMap();
-  const baseWl=wl;
-  function setup(m){
-    if(!m||!m.w)return null;
-    let data=blocks.get(m); if(data)return data;
-    const map=new Map(), tile=(typeof T==='number'?T:12), n=m.w.length;
-    for(let y=2;y<n-2;y+=2)for(let x=2;x<n-2;x+=2){
-      if(!m.w[y]?.[x]||!m.w[y+1]?.[x]||!m.w[y]?.[x+1]||!m.w[y+1]?.[x+1])continue;
-      if(typeof m.sp!=='undefined'&&Object.values(m.sp||{}).some(p=>Math.hypot((x+1)*tile-p.x,(y+1)*tile-p.y)<94))continue;
-      map.set(x+','+y,{x,y,hp:3,max:3,last:0});
-    }
-    data={map,tile};blocks.set(m,data);return data;
-  }
-  wl=function(b,m,x,y){
-    if(m&&m===G.map&&wall(m,x,y)){
-      const d=setup(m),now=performance.now(),tx=Math.floor(x/d.tile),ty=Math.floor(y/d.tile),bx=tx&~1,by=ty&~1;
-      const block=d.map.get(bx+','+by);
-      if(block&&now-block.last>180){
-        block.last=now;block.hp--;
-        if(block.hp<=0){
-          for(let yy=block.y;yy<block.y+2;yy++)for(let xx=block.x;xx<block.x+2;xx++)if(m.w[yy])m.w[yy][xx]=false;
-          d.map.delete(bx+','+by);m.bg=null;m.__gvDecalCanvas=null;if(G)G.mmMap=null;
-          if(typeof spark==='function')spark((bx+1)*d.tile,(by+1)*d.tile,'#d9c3a0');
-        }else if(typeof spark==='function')spark(x,y,'#d5c4a2');
-      }
-    }
-    return baseWl(b,m,x,y);
-  };
-  if(typeof render1==='function'){
-    const baseRender1=render1;
-    render1=function(){
-      baseRender1();const m=G&&G.map,d=m&&setup(m);if(!d||typeof cx==='undefined')return;
-      cx.save();cx.lineCap='round';
-      for(const b of d.map.values()){
-        const x=(b.x+1)*d.tile,y=(b.y+1)*d.tile;
-        cx.strokeStyle='rgba(55,30,22,.82)';cx.lineWidth=1.05;cx.beginPath();
-        cx.moveTo(x-4,y-5);cx.lineTo(x-1,y-1);cx.lineTo(x-3,y+2);
-        cx.moveTo(x-1,y-1);cx.lineTo(x+3,y-3);cx.lineTo(x+2,y+1);cx.lineTo(x+4,y+4);cx.stroke();
-        if(b.hp<b.max){cx.strokeStyle='rgba(255,225,170,.9)';cx.lineWidth=.8;cx.beginPath();cx.moveTo(x-4,y-5);cx.lineTo(x-1,y-1);cx.lineTo(x-3,y+2);cx.stroke();}
-      }
-      cx.restore();
-    };
-  }
-})();
+/* Los muros son indestructibles: no se modifica el mapa al recibir impactos. */
 </script>
 </body>
 </html>
